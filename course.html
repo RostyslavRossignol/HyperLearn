@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8">
+        <title>Урок - HyperLearn</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script src="https://unpkg.com/lucide@latest"></script>
+        <script
+            src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+        <link rel="stylesheet" href="styles.css">
+
+        <script
+            src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+        <script
+            src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+        <script
+            src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    </head>
+    <body class="text-slate-300 h-screen overflow-hidden flex">
+
+        <div class="mesh-bg"><div class="blob blob-2"></div></div>
+
+        <!-- SIDEBAR -->
+        <aside class="w-80 glass-panel flex flex-col z-20 hidden md:flex">
+            <div class="p-6 border-b border-white/10">
+                <a href="index.html"
+                    class="flex items-center gap-2 text-indigo-400 font-bold hover:text-white transition"><i
+                        data-lucide="arrow-left"></i> Назад</a>
+                <p id="course-title-display"
+                    class="mt-4 text-white font-bold text-lg">Загрузка...</p>
+            </div>
+            <div id="sidebar-list"
+                class="flex-1 overflow-y-auto p-4 space-y-2"></div>
+        </aside>
+
+        <!-- MAIN -->
+        <main class="flex-1 flex flex-col h-full relative overflow-y-auto">
+            <div class="p-6 md:p-10 max-w-6xl mx-auto w-full space-y-8">
+
+                <!-- VIDEO -->
+                <div id="video-wrapper-clickable"
+                    class="aspect-video bg-black/50 rounded-2xl overflow-hidden border border-white/10 relative group cursor-pointer shadow-2xl"
+                    onclick="alert('Выберите урок!')">
+                    <div
+                        class="absolute inset-0 flex items-center justify-center group-hover:scale-110 transition duration-500">
+                        <div
+                            class="w-20 h-20 bg-indigo-600 rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(79,70,229,0.5)]">
+                            <i data-lucide="play"
+                                class="w-8 h-8 text-white ml-1"></i>
+                        </div>
+                    </div>
+                    <div
+                        class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent pointer-events-none"></div>
+                    <h1 id="lesson-title-main"
+                        class="absolute bottom-6 left-8 text-2xl font-bold text-white">Выберите
+                        урок</h1>
+                </div>
+
+                <!-- TABS & CONTENT -->
+                <div class="glass-panel rounded-2xl p-1">
+                    <div class="flex gap-1 p-1 bg-slate-900/50 rounded-xl mb-4">
+                        <button onclick="switchTab('desc')" id="tab-btn-desc"
+                            class="flex-1 py-3 rounded-lg font-medium bg-indigo-600 text-white shadow transition">Описание</button>
+                        <button onclick="switchTab('homework')"
+                            id="tab-btn-homework"
+                            class="flex-1 py-3 rounded-lg font-medium text-slate-400 hover:text-white hover:bg-white/5 transition">Домашнее
+                            задание (AI)</button>
+                    </div>
+
+                    <div class="p-6 min-h-[300px]">
+                        <div id="tab-desc" class="tab-content active">
+                            <div class="prose prose-invert max-w-none">
+                                <h3>Добро пожаловать</h3>
+                                <p>Выберите урок в меню слева. Следующий урок
+                                    откроется только после прохождения
+                                    текущего.</p>
+                            </div>
+                        </div>
+
+                        <div id="tab-homework" class="tab-content">
+                            <h3
+                                class="text-xl text-white font-bold mb-4 flex items-center gap-2"><i
+                                    data-lucide="brain-circuit"
+                                    class="text-indigo-400"></i> Проверка знаний
+                                AI</h3>
+                            <p id="homework-task-desc" class="mb-4">Здесь будет
+                                текст задания...</p>
+                            <textarea id="homework-answer"
+                                class="w-full h-40 bg-slate-900/50 border border-slate-700 rounded-xl p-4 text-white focus:border-indigo-500 outline-none transition mb-4"
+                                placeholder="Напишите ваш код или ответ..."></textarea>
+
+                            <div class="flex gap-4">
+                                <button
+                                    onclick="submitHomeworkAI(document.getElementById('homework-task-desc').innerText)"
+                                    class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg hover:shadow-indigo-500/25 transition">Проверить</button>
+                                <button id="complete-lesson-btn"
+                                    class="border border-green-500/50 text-green-400 px-8 py-3 rounded-xl font-bold hover:bg-green-500/10 transition">Завершить
+                                    урок</button>
+                            </div>
+
+                            <div id="ai-grade-result" class="mt-6"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <script src="script.js"></script>
+    </body>
+</html>

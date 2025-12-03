@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>AI Ментор - Data Science</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script src="https://unpkg.com/lucide@latest"></script>
+        <script
+            src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+        <link rel="stylesheet" href="styles.css">
+        <script>tailwind.config = { theme: { extend: { fontFamily: { sans: ['Outfit', 'sans-serif'] } } } }</script>
+    </head>
+    <body class="text-slate-300 h-screen overflow-hidden antialiased">
+
+        <div class="mesh-bg">
+            <div class="blob blob-1"></div>
+            <div class="blob blob-2"></div>
+            <div class="blob blob-3"></div>
+        </div>
+
+        <div class="flex h-full">
+            <!-- Sidebar -->
+            <aside
+                class="w-80 glass-panel flex flex-col h-full z-20 hidden md:flex">
+                <div class="p-6 border-b border-white/10">
+                    <a href="index.html" class="flex items-center gap-3 mb-2">
+                        <div
+                            class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold"><i
+                                data-lucide="database"
+                                class="w-5 h-5"></i></div>
+                        <span
+                            class="font-bold text-lg text-white tracking-wide">HyperLearn</span>
+                    </a>
+                    <p class="text-xs text-slate-400">Data Science Bootcamp</p>
+                </div>
+                <div class="flex-1 px-4 py-4 space-y-2">
+                    <a href="index.html"
+                        class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition"><i
+                            data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                        Обзор</a>
+                    <a href="course.html"
+                        class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition"><i
+                            data-lucide="book-open" class="w-5 h-5"></i> Мои
+                        курсы</a>
+                    <a href="mentor.html"
+                        class="nav-item active flex items-center gap-3 px-4 py-3 rounded-xl text-white font-medium transition"><i
+                            data-lucide="message-square" class="w-5 h-5"></i> AI
+                        Ментор</a>
+                </div>
+                <div
+                    class="p-4 border-t border-white/10 flex items-center gap-3">
+                    <img
+                        src="https://api.dicebear.com/9.x/avataaars/svg?seed=Felix"
+                        class="w-10 h-10 rounded-full border-2 border-indigo-500/50">
+                    <div class="flex-1"><p
+                            class="text-sm font-bold text-white">Алексей
+                            С.</p><p class="text-xs text-slate-400">Студент
+                            PRO</p></div>
+                    <button onclick="logout()"
+                        class="p-2 hover:bg-red-500/20 rounded-lg text-slate-400 hover:text-red-400"><i
+                            data-lucide="log-out" class="w-5 h-5"></i></button>
+                </div>
+            </aside>
+
+            <!-- Chat Area -->
+            <main class="flex-1 flex flex-col h-full relative">
+                <header
+                    class="h-16 flex items-center justify-between px-6 border-b border-white/5 bg-slate-900/20 backdrop-blur-md z-20">
+                    <div class="flex items-center gap-4">
+                        <button id="burger-btn" class="md:hidden text-white"><i
+                                data-lucide="menu"></i></button>
+                        <div class="flex items-center gap-2"><div
+                                class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div><span
+                                class="text-white font-medium">Gemini 2.0
+                                Flash</span></div>
+                    </div>
+                    <div class="flex gap-2">
+                        <input type="password" id="api-key-input"
+                            placeholder="API Key"
+                            class="bg-slate-800 border border-slate-700 text-xs text-white px-3 py-1.5 rounded-lg w-32 focus:border-indigo-500 outline-none">
+                        <button onclick="saveApiKey()"
+                            class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-3 py-1.5 rounded-lg transition">OK</button>
+                    </div>
+                </header>
+
+                <div id="chat-container"
+                    class="flex-1 overflow-y-auto p-4 lg:p-8 space-y-4 pb-32">
+                    <div class="flex mb-4"><div
+                            class="bg-slate-800 text-slate-300 rounded-r-xl rounded-tl-xl p-4 border border-white/10 max-w-[85%] text-sm">Привет!
+                            Я твой AI ментор по Data Science. Помогу с Python,
+                            SQL или объясню сложную тему из ML. 👇</div></div>
+                </div>
+
+                <div
+                    class="absolute bottom-0 inset-x-0 p-4 bg-gradient-to-t from-[#0f172a] via-[#0f172a] to-transparent z-10">
+                    <div
+                        class="max-w-4xl mx-auto glass-panel p-2 rounded-2xl flex items-end gap-2 shadow-2xl">
+                        <textarea id="chat-input" rows="1"
+                            class="flex-1 bg-transparent border-none text-white focus:ring-0 resize-none py-3 px-4 max-h-32 placeholder-slate-500 focus:outline-none"
+                            placeholder="Спроси меня про нейросети..."></textarea>
+                        <button onclick="sendChatMessage()"
+                            class="p-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl transition shadow-lg shrink-0"><i
+                                data-lucide="send" class="w-5 h-5"></i></button>
+                    </div>
+                </div>
+            </main>
+        </div>
+        <script src="script.js"></script>
+    </body>
+</html>

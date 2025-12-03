@@ -1,0 +1,160 @@
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap");
+
+:root {
+    --color-bg: #0f172a;
+    --color-glass: rgba(17, 25, 40, 0.75);
+    --color-border: rgba(255, 255, 255, 0.1);
+    --color-lock: #ef4444;
+}
+
+body {
+    background-color: var(--color-bg);
+    color: #cbd5e1;
+    font-family: "Outfit", sans-serif;
+    overflow-x: hidden;
+    margin: 0;
+}
+
+/* --- 3D FLIP (ПЕРЕВОРОТ КАРТОЧКИ) --- */
+.perspective-1000 {
+    perspective: 1000px;
+}
+.transform-style-3d {
+    transform-style: preserve-3d;
+    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.backface-hidden {
+    backface-visibility: hidden;
+}
+.rotate-y-180 {
+    transform: rotateY(180deg);
+}
+.flipped {
+    transform: rotateY(180deg);
+} /* Класс для JS */
+
+/* --- АНИМАЦИИ (ФОН И ПОЯВЛЕНИЕ) --- */
+#network-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    pointer-events: none;
+}
+.mesh-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    background: #0f172a;
+    overflow: hidden;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+.animate-fade-in-up {
+    animation: fadeInUp 0.5s ease-out forwards;
+}
+.animate-float {
+    animation: float 6s ease-in-out infinite;
+}
+@keyframes float {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* --- GLASSMORPHISM --- */
+.glass-panel {
+    background: var(--color-glass);
+    backdrop-filter: blur(16px);
+    border-right: 1px solid var(--color-border);
+}
+.glass-panel-solid {
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+.glass-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+.glass-card:hover {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(99, 102, 241, 0.4);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px -10px rgba(99, 102, 241, 0.3);
+}
+
+/* --- UI КОМПОНЕНТЫ --- */
+.lesson-locked {
+    background-color: rgba(239, 68, 68, 0.1);
+    pointer-events: none;
+    opacity: 0.5;
+}
+.lesson-locked .lesson-icon {
+    background: var(--color-lock);
+    color: white;
+}
+.ai-response-area {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    padding: 1rem;
+    border-radius: 1rem;
+    white-space: pre-wrap;
+    margin-top: 1rem;
+}
+.recaptcha-wrapper {
+    transform: scale(0.85);
+    transform-origin: 50% 0;
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+}
+
+/* --- АККОРДЕОН (ПРОГРАММА) --- */
+details > summary {
+    list-style: none;
+}
+details > summary::-webkit-details-marker {
+    display: none;
+}
+details[open] summary ~ * {
+    animation: fadeInUp 0.3s ease-in-out;
+}
+.rotate-icon {
+    transition: transform 0.3s;
+}
+details[open] .rotate-icon {
+    transform: rotate(180deg);
+}
+
+/* --- UTILS --- */
+.text-glow {
+    text-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
+}
+.hidden {
+    display: none !important;
+}
+.opacity-0 {
+    opacity: 0 !important;
+}

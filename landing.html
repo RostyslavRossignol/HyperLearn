@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>HyperLearn - Data Science Course</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script src="https://unpkg.com/lucide@latest"></script>
+        <link rel="stylesheet" href="styles.css">
+
+        <script src="https://www.google.com/recaptcha/api.js" async
+            defer></script>
+        <script
+            src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+        <script
+            src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+        <script
+            src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    </head>
+    <body class="bg-[#0f172a] text-white overflow-x-hidden relative h-screen">
+
+        <!-- CANVAS Анимация -->
+        <canvas id="network-canvas"
+            class="fixed inset-0 z-0 pointer-events-none"></canvas>
+        <!-- Градиент поверх канваса сделал чуть прозрачнее, чтобы анимацию было лучше видно -->
+        <div
+            class="fixed inset-0 z-0 bg-gradient-to-b from-[#0f172a]/70 via-[#0f172a]/40 to-[#0f172a] pointer-events-none"></div>
+
+        <!-- HEADER -->
+        <header
+            class="fixed top-0 w-full z-50 py-4 px-6 md:px-12 flex justify-between items-center backdrop-blur-sm border-b border-white/5">
+            <div class="flex items-center gap-3">
+                <div
+                    class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg"><i
+                        data-lucide="database"
+                        class="w-5 h-5 text-white"></i></div>
+                <span class="font-bold text-xl font-sans">HyperLearn <span
+                        class="text-indigo-400 font-light">DS</span></span>
+            </div>
+            <div class="flex gap-4 items-center">
+                <!-- Кнопка "Войти" теперь всегда видна -->
+                <button onclick="openAuth('login')"
+                    class="text-slate-300 hover:text-white font-medium text-sm px-3 py-2 transition hover:bg-white/5 rounded-lg">Войти</button>
+                <button onclick="openAuth('register')"
+                    class="px-5 py-2 bg-white/10 hover:bg-white/20 border border-white/10 rounded-full text-sm font-semibold transition backdrop-blur-md">Регистрация</button>
+            </div>
+        </header>
+
+        <main
+            class="relative z-10 h-full flex flex-col items-center justify-center px-6 text-center">
+            <div
+                class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-bold mb-6 animate-float">
+                <span class="relative flex h-2 w-2"><span
+                        class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span><span
+                        class="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span></span>
+                Старт: в любое время. Занимайся в удобном темпе
+            </div>
+            <h1 class="text-5xl md:text-7xl font-bold mb-6 leading-tight">Data
+                Science <br><span
+                    class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 text-glow">Будущего</span></h1>
+            <p
+                class="text-slate-400 text-lg md:text-xl max-w-2xl mb-10 leading-relaxed">Освой
+                Python, Machine Learning и Нейросети. Твой личный <span
+                    class="text-indigo-400">AI Ментор</span> ждет.</p>
+            <div class="flex flex-col md:flex-row gap-4 w-full md:w-auto">
+                <button onclick="openAuth('register')"
+                    class="px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 rounded-xl font-bold text-lg shadow-xl shadow-indigo-500/30 transform hover:scale-105 transition flex items-center justify-center gap-2">Начать
+                    обучение <i data-lucide="arrow-right"
+                        class="w-5 h-5"></i></button>
+                <button onclick="openProgram()"
+                    class="px-8 py-4 glass-panel rounded-xl font-bold text-lg hover:bg-white/10 transition flex items-center justify-center gap-2"><i
+                        data-lucide="play-circle"
+                        class="w-5 h-5 text-indigo-400"></i> Программа
+                    курса</button>
+            </div>
+        </main>
+
+        <!-- PROGRAM MODAL -->
+        <div id="program-overlay"
+            class="fixed inset-0 z-[60] bg-black/90 backdrop-blur-md hidden flex justify-center p-4 transition-opacity duration-300 opacity-0 overflow-y-auto">
+            <div
+                class="relative w-full max-w-5xl mt-10 mb-10 animate-fade-in-up">
+                <button onclick="closeProgram()"
+                    class="absolute -top-12 right-0 md:-right-12 text-slate-400 hover:text-white transition z-10"><i
+                        data-lucide="x" class="w-8 h-8"></i></button>
+                <div
+                    class="glass-panel-solid rounded-2xl p-6 md:p-10 shadow-2xl border border-indigo-500/20">
+                    <h2
+                        class="text-3xl font-bold text-white mb-2 text-center">Полная
+                        программа обучения</h2>
+                    <div id="program-content" class="space-y-4"></div>
+                    <div class="mt-8 text-center pt-6 border-t border-white/10">
+                        <button onclick="closeProgram(); openAuth('register')"
+                            class="px-8 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition shadow-lg">Присоединиться</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AUTH MODAL -->
+        <div id="auth-overlay"
+            class="fixed inset-0 z-[60] bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4 transition-opacity duration-300 opacity-0">
+            <div class="relative w-full max-w-md h-[550px] perspective-1000">
+                <button onclick="closeAuth()"
+                    class="absolute -top-12 right-0 text-slate-400 hover:text-white transition z-10"><i
+                        data-lucide="x" class="w-8 h-8"></i></button>
+                <div id="auth-card-inner"
+                    class="relative w-full h-full transition-transform duration-700 transform-style-3d">
+                    <!-- FRONT: LOGIN -->
+                    <div
+                        class="absolute inset-0 glass-panel-solid rounded-2xl p-8 flex flex-col backface-hidden shadow-2xl">
+                        <h2 class="text-2xl font-bold text-white mb-2">Вход</h2>
+                        <form onsubmit="handleAuthSubmit(event)" id="login-form"
+                            class="space-y-4 flex-1">
+                            <input type="email" placeholder="Email"
+                                class="w-full bg-slate-900/50 border border-slate-700 rounded-xl py-3 px-4 text-white focus:border-indigo-500 outline-none">
+                            <input type="password" placeholder="Пароль"
+                                class="w-full bg-slate-900/50 border border-slate-700 rounded-xl py-3 px-4 text-white focus:border-indigo-500 outline-none">
+                            <button type="submit"
+                                class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3.5 rounded-xl shadow-lg mt-4">Войти</button>
+                        </form>
+                        <div
+                            class="mt-6 text-center border-t border-white/5 pt-6">
+                            <button onclick="toggleAuthMode()"
+                                class="text-indigo-400 hover:text-indigo-300 font-semibold text-sm">Регистрация</button>
+                        </div>
+                    </div>
+                    <!-- BACK: REGISTER -->
+                    <div
+                        class="absolute inset-0 glass-panel-solid rounded-2xl p-8 flex flex-col backface-hidden rotate-y-180 shadow-2xl">
+                        <h2
+                            class="text-2xl font-bold text-white mb-2">Регистрация</h2>
+                        <form onsubmit="handleAuthSubmit(event)"
+                            id="register-form"
+                            class="space-y-3 flex-1 overflow-y-auto hide-scrollbar">
+                            <input type="text" placeholder="Имя"
+                                class="w-full bg-slate-900/50 border border-slate-700 rounded-xl py-3 px-4 text-white focus:border-indigo-500 outline-none">
+                            <input type="email" placeholder="Email"
+                                class="w-full bg-slate-900/50 border border-slate-700 rounded-xl py-3 px-4 text-white focus:border-indigo-500 outline-none">
+                            <input type="password" placeholder="Пароль"
+                                class="w-full bg-slate-900/50 border border-slate-700 rounded-xl py-3 px-4 text-white focus:border-indigo-500 outline-none">
+                            <div class="flex justify-center mt-2"><div
+                                    id="g-recaptcha" class="g-recaptcha"
+                                    data-sitekey="YOUR_SITE_KEY"></div></div>
+                            <button type="submit"
+                                class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold py-3.5 rounded-xl shadow-lg mt-2">Создать</button>
+                        </form>
+                        <div
+                            class="mt-4 text-center border-t border-white/5 pt-4">
+                            <button onclick="toggleAuthMode()"
+                                class="text-indigo-400 hover:text-indigo-300 font-semibold text-sm">Войти</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="script.js"></script>
+
+        <script>
+        const LANDING_COURSES_DB = {
+            "python": {
+                title: "КУРС 1: Python для Data Science",
+                color: "indigo",
+                icon: "code-2",
+                modules: [
+                    { title: "Модуль 0: Введение", lessons: ["0.1 Python в ML и Data Science", "0.2 Пример: Анализ изображений"] },
+                    { title: "Модуль 1: Основы Python", lessons: ["1.1 Переменные и типы", "1.2 Типы данных (продолжение)", "1.3 Циклы for и while", "1.4 Условный оператор If/Else"] },
+                    { title: "Модуль 2: Структуры данных", lessons: ["2.1 Функции: Основы", "2.2 Аргументы функции", "2.3 Call stack и Scope", "2.4 Ссылочная модель данных", "2.5 Срезы (Slicing)"] },
+                    { title: "Модуль 3: Окружение разработки", lessons: ["3.1 Библиотеки и PIP", "3.2 Anaconda и Conda", "3.3 Виртуальное окружение (venv)"] },
+                    { title: "Модуль 4: Инструменты аналитика", lessons: ["4.1 Jupyter Notebook", "4.2 Введение в NumPy", "4.3 Введение в Pandas", "4.4 Matplotlib"] },
+                    { title: "Модуль 5: Pandas Deep Dive", lessons: ["5.1 Чтение файлов (CSV, Excel)", "5.2 Фильтрация и сортировка", "5.3 Группировка (GroupBy)", "5.4 Визуализация (Seaborn)"] },
+                    { title: "Модуль 6: Работа с SQL", lessons: ["6.1 Реляционные базы данных", "6.2 SELECT, JOIN", "6.3 SQL внутри Python"] },
+                    { title: "Модуль 7: ООП в Python", lessons: ["7.1 Классы и объекты", "7.2 Наследование, Инкапсуляция"] },
+                    { title: "Модуль 8: Git", lessons: ["8.1 Введение в Git", "8.2 Ветки и слияние", "8.3 GitHub Remote"] },
+                    { title: "Модуль 9: Backend (FastAPI)", lessons: ["9.1 HTTP, JSON", "9.2 Первое API на FastAPI", "9.3 Pydantic модели"] }
+                ]
+            },
+            "algo": {
+                title: "КУРС 2: Алгоритмы и Структуры Данных",
+                color: "blue",
+                icon: "cpu",
+                modules: [
+                    { title: "Модуль 1: Анализ алгоритмов", lessons: ["1.1 Big O Notation", "1.2 Оценка сложности кода"] },
+                    { title: "Модуль 2: Базовые структуры", lessons: ["2.1 Массивы и Динамические массивы", "2.2 Связные списки"] },
+                    { title: "Модуль 3: Графы и Деревья", lessons: ["3.1 Поиск в ширину (BFS)", "3.2 Поиск в глубину (DFS)"] },
+                    { title: "Модуль 4: Алгоритмические подходы", lessons: ["4.1 Рекурсия", "4.2 Динамическое программирование"] }
+                ]
+            },
+            "stats": {
+                title: "КУРС 3: Математическая статистика",
+                color: "green",
+                icon: "bar-chart-2",
+                modules: [
+                    { title: "Модуль 1: Теория вероятностей", lessons: ["1.1 Основы вероятности", "1.2 Формула Байеса"] },
+                    { title: "Модуль 2: Распределения", lessons: ["2.1 Нормальное распределение", "2.2 Центральная Предельная Теорема"] },
+                    { title: "Модуль 3: Проверка гипотез", lessons: ["3.1 p-value и уровень значимости", "3.2 A/B Тестирование"] }
+                ]
+            },
+            "ml": {
+                title: "КУРС 4: Machine Learning",
+                color: "pink",
+                icon: "brain-circuit",
+                modules: [
+                    { title: "Модуль 1: Введение в ML", lessons: ["1.1 Виды обучения", "1.2 Метрики качества"] },
+                    { title: "Модуль 2: Линейные модели", lessons: ["2.1 Линейная регрессия", "2.2 Градиентный спуск", "2.3 Регуляризация"] },
+                    { title: "Модуль 3: Деревянные модели", lessons: ["3.1 Решающие деревья", "3.2 Случайный лес", "3.3 Градиентный бустинг"] },
+                    { title: "Модуль 4: Кластеризация", lessons: ["4.1 Метод K-Means", "4.2 Алгоритм DBSCAN"] }
+                ]
+            },
+            "dl": {
+                title: "КУРС 5: Deep Learning",
+                color: "cyan",
+                icon: "network",
+                modules: [
+                    { title: "Модуль 1: Основы DL", lessons: ["1.1 Перцептрон", "1.2 Backpropagation"] },
+                    { title: "Модуль 2: Сверточные сети (CNN)", lessons: ["2.1 Свертка и Пулинг", "2.2 Архитектуры: ResNet"] },
+                    { title: "Модуль 3: NLP", lessons: ["3.1 RNN и LSTM", "3.2 Трансформеры и GPT"] }
+                ]
+            },
+            "career": {
+                title: "БОНУС: Карьера",
+                color: "yellow",
+                icon: "briefcase",
+                modules: [
+                    { title: "Модуль 1: Трудоустройство", lessons: ["1.1 Составление резюме для DS", "1.2 Техническое собеседование"] }
+                ]
+            }
+        };
+
+        function openProgram() {
+            renderLandingProgram();
+            const overlay = document.getElementById('program-overlay');
+            if(overlay) {
+                overlay.classList.remove('hidden');
+                setTimeout(() => overlay.classList.remove('opacity-0'), 10);
+            }
+        }
+
+        function closeProgram() {
+            const overlay = document.getElementById('program-overlay');
+            if(overlay) {
+                overlay.classList.add('opacity-0');
+                setTimeout(() => overlay.classList.add('hidden'), 300);
+            }
+        }
+
+        function renderLandingProgram() {
+            const content = document.getElementById('program-content');
+            if (!content || content.children.length > 0) return;
+
+            const courseOrder = ['python', 'algo', 'stats', 'ml', 'dl', 'career'];
+            
+            content.innerHTML = courseOrder.map(key => {
+                const c = LANDING_COURSES_DB[key];
+                return `
+                <div class="mb-6 animate-fade-in-up">
+                    <details class="group bg-slate-800/40 rounded-xl border border-white/5 overflow-hidden">
+                        <summary class="flex items-center justify-between p-5 cursor-pointer hover:bg-white/5 transition select-none">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-lg bg-${c.color}-500/20 flex items-center justify-center text-${c.color}-400">
+                                    <i data-lucide="${c.icon}" class="w-8 h-8"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-2xl font-bold text-white">${c.title}</h3>
+                                    <p class="text-base text-slate-400">${c.modules.length} модулей</p>
+                                </div>
+                            </div>
+                            <i data-lucide="chevron-down" class="w-8 h-8 text-slate-400 rotate-icon group-open:rotate-180 transition-transform"></i>
+                        </summary>
+                        <div class="p-5 pt-0 border-t border-white/5 bg-slate-900/30">
+                            <div class="space-y-6 mt-6">
+                                ${c.modules.map(mod => `
+                                    <div class="pl-6 border-l-4 border-${c.color}-500/30">
+                                        <h4 class="text-xl font-semibold text-slate-200 mb-3">${mod.title}</h4>
+                                        <ul class="space-y-3">
+                                            ${mod.lessons.map(l => `<li class="text-lg text-slate-300 flex items-center gap-3"><span class="w-2 h-2 rounded-full bg-${c.color}-500"></span>${l}</li>`).join('')}
+                                        </ul>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </details>
+                </div>`;
+            }).join('');
+            if(typeof lucide !== 'undefined') lucide.createIcons();
+        }
+    </script>
+    </body>
+</html>
