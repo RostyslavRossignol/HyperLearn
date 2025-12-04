@@ -1,4 +1,4 @@
-/* --- script.js (GOLDEN MASTER VERSION) --- */
+/* --- script.js (Финальная версия) --- */
 
 // 1. FIREBASE CONFIG
 const firebaseConfig = {
@@ -11,6 +11,7 @@ const firebaseConfig = {
 };
 
 let auth, db;
+// Инициализация. Теперь она не вызовет ошибку, так как script.js загружается позже.
 if (typeof firebase !== "undefined") {
 	firebase.initializeApp(firebaseConfig);
 	auth = firebase.auth();
@@ -20,7 +21,7 @@ if (typeof firebase !== "undefined") {
 let currentUser = null;
 let userProgress = {};
 const DEFAULT_VIDEO = "x04T6UnOxJI";
-const AI_GRADE_ENDPOINT = "/api/ai-grade"; // URL Cloud Function
+const AI_GRADE_ENDPOINT = "/api/ai-grade";
 
 // 2. ПОЛНАЯ БАЗА ДАННЫХ (COURSES_DB)
 const COURSES_DB = {
@@ -30,6 +31,7 @@ const COURSES_DB = {
 		icon: "code-2",
 		nextCourseId: "algo",
 		modules: [
+			// ... (ВАШИ МОДУЛИ) ...
 			{
 				title: "Модуль 0: Введение",
 				lessons: [
@@ -246,12 +248,26 @@ document.addEventListener("DOMContentLoaded", () => {
 	// Слушатель Auth
 	if (auth) {
 		auth.onAuthStateChanged((user) => {
+			const path = window.location.pathname;
+			// Проверяем, находится ли пользователь на landing.html (или просто на /)
+			const isOnLanding = path.includes("landing.html") || path === "/";
+
 			if (user) {
 				currentUser = user;
 				loadUserProgress(user.uid);
+
+				// РЕШЕНИЕ ПРОБЛЕМЫ 2: Если пользователь залогинен и находится на лендинге, перенаправляем на дашборд.
+				if (isOnLanding) {
+					window.location.href = "index.html";
+					// Никакой "вспышки" не будет, потому что перенаправление происходит сразу,
+					// как только Firebase подтверждает сессию.
+				}
 			} else {
 				currentUser = null;
-				checkAuthRedirect();
+				// Если пользователь не залогинен и пытается попасть на дашборд (не лендинг)
+				if (!isOnLanding && !path.includes("index.html")) {
+					window.location.href = "landing.html";
+				}
 			}
 		});
 	}
@@ -292,6 +308,8 @@ window.toggleAuthMode = function () {
 };
 
 window.openProgram = function () {
+	// Используем renderLandingProgram, так как она определена в HTML-скрипте,
+	// а renderFullProgram - в script.js. Проверим, где мы.
 	if (typeof renderLandingProgram === "function") renderLandingProgram();
 	else renderFullProgram();
 
@@ -457,7 +475,7 @@ function initLandingAnimation() {
 			this.y = Math.random() * h;
 			this.vx = (Math.random() - 0.5) * 0.5;
 			this.vy = (Math.random() - 0.5) * 0.5;
-			this.originVx = this.vx; // Запоминаем скорость
+			this.originVx = this.vx;
 			this.originVy = this.vy;
 		}
 		update() {
@@ -470,7 +488,7 @@ function initLandingAnimation() {
 					const forceDirectionX = dx / distance;
 					const forceDirectionY = dy / distance;
 					const force = (mouse.radius - distance) / mouse.radius;
-					const directionX = forceDirectionX * force * 3; // Сила притяжения
+					const directionX = forceDirectionX * force * 3;
 					const directionY = forceDirectionY * force * 3;
 					this.vx = this.originVx + directionX;
 					this.vy = this.originVy + directionY;
@@ -551,14 +569,12 @@ function initLandingAnimation() {
 }
 
 // --- LOGIC: COURSE PAGE & LOCKS ---
-function checkAuthRedirect() {
-	if (!currentUser && !window.location.pathname.includes("landing.html"))
-		window.location.href = "landing.html";
-}
+// УДАЛЯЕМ checkAuthRedirect(), ее логика перенесена в onAuthStateChanged
 
 async function loadUserProgress(uid) {
 	const doc = await db.collection("users").doc(uid).get();
 	if (doc.exists) userProgress = doc.data().progress || {};
+	// Условие для initCoursePage здесь оставлено, так как оно нужно для загрузки данных курса
 	if (window.location.pathname.includes("course.html")) initCoursePage();
 }
 
@@ -642,7 +658,7 @@ function loadLesson(less, btn) {
 				.collection("users")
 				.doc(currentUser.uid)
 				.set({ progress: userProgress }, { merge: true });
-			initCoursePage(); // Обновить замки
+			initCoursePage();
 		};
 }
 
