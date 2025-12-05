@@ -3,91 +3,165 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Дашборд - HyperLearn</title>
+        <title>HyperLearn - Дашборд</title>
+        <!-- FIX: Анти-мерцание -->
+        <style>html, body { background-color: #0f172a; }</style>
         <script src="https://cdn.tailwindcss.com"></script>
         <script src="https://unpkg.com/lucide@latest"></script>
         <link rel="stylesheet" href="styles.css">
+
+        <!-- Firebase SDK -->
         <script
             src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
         <script
             src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
         <script
             src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+        <script
+            src="https://www.gstatic.com/firebasejs/8.10.1/firebase-functions.js"></script>
     </head>
-    <body class="text-slate-300 h-screen overflow-hidden flex antialiased">
 
-        <!-- Сетка на фоне -->
-        <div class="mesh-bg"></div>
+    <body
+        class="relative h-screen overflow-hidden flex bg-[#0f172a] text-slate-300">
 
-        <!-- SIDEBAR -->
-        <aside class="w-80 glass-panel flex flex-col z-20 hidden md:flex">
-            <div class="p-8 border-b border-white/10">
-                <h1
-                    class="text-2xl font-bold text-white tracking-wide flex items-center gap-2">
-                    <i data-lucide="zap" class="text-indigo-400"></i> HyperLearn
-                </h1>
+        <div class="mesh-bg"><div class="blob"></div><div
+                class="blob blob-2"></div></div>
+        <div id="menu-overlay"
+            class="fixed inset-0 bg-black/60 z-30 hidden lg:hidden backdrop-blur-sm"></div>
+
+        <!-- SIDEBAR (FIX: w-80 как везде) -->
+        <aside id="mobile-menu"
+            class="fixed lg:static inset-y-0 left-0 w-80 glass-panel border-r border-white/10 z-50 flex flex-col transition-transform duration-300 h-full bg-[#0f172a]/95 backdrop-blur-xl -translate-x-full lg:translate-x-0">
+            <div class="p-6 flex items-center justify-between shrink-0">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold shadow-lg">
+                        <i data-lucide="database"></i>
+                    </div>
+                    <span
+                        class="text-xl font-bold text-white tracking-tight">HyperLearn</span>
+                </div>
+                <button id="close-menu-btn"
+                    class="lg:hidden text-slate-400 hover:text-white"><i
+                        data-lucide="x"></i></button>
             </div>
-            <nav class="flex-1 p-4 space-y-2">
-                <a href="#"
-                    class="nav-item active flex items-center gap-4 p-4 rounded-xl text-white bg-white/5 font-medium transition"><i
-                        data-lucide="layout-dashboard"></i> Дашборд</a>
+
+            <nav class="px-4 space-y-2 mt-4 shrink-0">
+                <a href="index.html"
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl bg-indigo-600 text-white font-medium shadow-lg">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                    Дашборд
+                </a>
                 <a href="course.html"
-                    class="nav-item flex items-center gap-4 p-4 rounded-xl hover:bg-white/5 transition"><i
-                        data-lucide="play-circle"></i> Мои курсы</a>
-                <a href="#"
-                    class="nav-item flex items-center gap-4 p-4 rounded-xl hover:bg-white/5 transition"><i
-                        data-lucide="trophy"></i> Достижения</a>
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition font-medium">
+                    <i data-lucide="play-circle" class="w-5 h-5"></i> Мои курсы
+                </a>
+                <a href="mentor.html"
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition font-medium">
+                    <i data-lucide="bot" class="w-5 h-5 text-indigo-400"></i> AI
+                    Ментор
+                </a>
             </nav>
-            <div class="p-6 border-t border-white/10">
+
+            <!-- FIX: Кнопка выхода с иконкой -->
+            <div class="p-4 border-t border-white/10 mt-auto shrink-0">
                 <button onclick="logout()"
-                    class="flex items-center gap-2 text-red-400 hover:text-white transition"><i
-                        data-lucide="log-out"></i> Выйти</button>
+                    class="flex items-center gap-3 w-full p-2 rounded-xl hover:bg-white/5 transition group text-left">
+                    <img
+                        class="w-10 h-10 rounded-full border border-indigo-500 bg-slate-800 user-avatar-img"
+                        src>
+                    <div class="flex-1 overflow-hidden">
+                        <p
+                            class="text-sm font-bold text-white truncate user-display-name">Загрузка...</p>
+                        <p class="text-xs text-slate-400">Студент PRO</p>
+                    </div>
+                    <i data-lucide="log-out"
+                        class="w-5 h-5 text-slate-500 group-hover:text-red-400 transition"></i>
+                </button>
             </div>
         </aside>
 
-        <!-- MAIN -->
-        <main class="flex-1 flex flex-col relative overflow-y-auto">
+        <!-- MAIN CONTENT -->
+        <main
+            class="flex-1 flex flex-col h-full relative overflow-y-auto bg-slate-900/50">
             <header
-                class="p-8 flex justify-between items-center glass-panel-solid md:bg-transparent md:border-none sticky top-0 z-30">
-                <h2 class="text-2xl font-bold text-white">Добро пожаловать!</h2>
-                <div class="md:hidden" id="burger-btn"><i
-                        data-lucide="menu"></i></div>
+                class="h-16 border-b border-white/5 flex items-center justify-between px-6 bg-slate-900/80 backdrop-blur sticky top-0 z-30 lg:hidden shrink-0">
+                <button id="burger-btn"
+                    class="text-white p-2 hover:bg-white/10 rounded-lg transition"><i
+                        data-lucide="menu"></i></button>
+                <h1 class="text-lg font-bold text-white ml-2">Обзор</h1>
+                <div class="w-6"></div>
             </header>
 
-            <div class="p-8 max-w-7xl mx-auto w-full">
-                <!-- Roadmap -->
-                [Image of дорожная карта]
-                <h3 class="text-xl font-bold text-white mb-6">Ваш путь
-                    развития</h3>
-                <div id="roadmap-container"
-                    class="flex gap-6 overflow-x-auto pb-6 mb-10"></div>
+            <div class="p-6 lg:p-10 max-w-7xl mx-auto w-full flex-1">
+                <h2
+                    class="text-3xl font-bold text-white mb-2 user-greeting">Привет!
+                    👋</h2>
+                <p class="text-slate-400 mb-8">Твой прогресс в Data Science
+                    растет.</p>
 
-                <h3 class="text-xl font-bold text-white mb-6">Доступные
-                    курсы</h3>
-                <div
-                    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- Cards -->
-                    <a href="course.html?id=python"
-                        class="glass-card p-6 rounded-2xl group cursor-pointer">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                    <div
+                        class="glass-card p-6 rounded-2xl border border-white/5">
+                        <div class="flex justify-between items-start mb-2">
+                            <div
+                                class="p-2 bg-indigo-500/20 rounded-lg text-indigo-400"><i
+                                    data-lucide="check-circle"></i></div>
+                            <span
+                                class="text-xs font-bold text-green-400 bg-green-500/10 px-2 py-1 rounded">Активен</span>
+                        </div>
+                        <h3 id="lessons-completed-count"
+                            class="text-3xl font-bold text-white mb-1">0</h3>
+                        <p class="text-sm text-slate-400">Уроков пройдено</p>
+                    </div>
+
+                    <div
+                        class="glass-card p-6 rounded-2xl border-indigo-500/30 relative overflow-hidden">
                         <div
-                            class="h-40 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl mb-4 flex items-center justify-center text-4xl shadow-lg group-hover:scale-[1.02] transition">🐍</div>
-                        <h4 class="text-xl font-bold text-white mb-2">Python
-                            Base</h4>
-                        <p class="text-sm text-slate-400">Основы языка для Data
-                            Science</p>
-                    </a>
-                    <a href="course.html?id=ml"
-                        class="glass-card p-6 rounded-2xl group cursor-pointer">
-                        <div
-                            class="h-40 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl mb-4 flex items-center justify-center text-4xl shadow-lg group-hover:scale-[1.02] transition">🤖</div>
-                        <h4 class="text-xl font-bold text-white mb-2">Machine
-                            Learning</h4>
-                        <p class="text-sm text-slate-400">Классические алгоритмы
-                            обучения</p>
-                    </a>
+                            class="absolute top-0 right-0 w-20 h-20 bg-indigo-500/20 blur-xl"></div>
+                        <div class="flex justify-between items-start mb-2">
+                            <div
+                                class="p-2 bg-purple-500/20 rounded-lg text-purple-400"><i
+                                    data-lucide="bar-chart"></i></div>
+                        </div>
+                        <h3 id="total-progress-percent"
+                            class="text-3xl font-bold text-white mb-1">0%</h3>
+                        <p class="text-sm text-slate-400">Общий прогресс</p>
+                    </div>
+
+                    <div
+                        class="glass-card p-6 rounded-2xl border border-white/5">
+                        <div class="flex justify-between items-start mb-2">
+                            <div
+                                class="p-2 bg-pink-500/20 rounded-lg text-pink-400"><i
+                                    data-lucide="clock"></i></div>
+                        </div>
+                        <h3 class="text-3xl font-bold text-white mb-1">∞</h3>
+                        <p class="text-sm text-slate-400">Времени впереди</p>
+                    </div>
+                </div>
+
+                <h3 class="text-xl font-bold text-white mb-4">Текущий
+                    модуль</h3>
+                <a href="course.html" id="current-module-card"
+                    class="block group mb-10">
+                    <div
+                        class="p-6 text-center text-slate-400 glass-card rounded-xl border border-white/5">Начните
+                        обучение, чтобы увидеть прогресс</div>
+                </a>
+
+                <h3 class="text-xl font-bold text-white mb-4">Дорожная карта
+                    (Roadmap)</h3>
+
+                <!-- FIX: Добавлен custom-scrollbar -->
+                <div id="roadmap-container"
+                    class="flex items-start space-x-0 overflow-x-auto pb-6 custom-scrollbar min-h-[220px]">
+                    <div class="text-slate-500 p-4">Загрузка карты
+                        обучения...</div>
                 </div>
             </div>
         </main>
-        <script src="script.js"></script>
+
+        <script type="module" src="js/app.js"></script>
     </body>
 </html>

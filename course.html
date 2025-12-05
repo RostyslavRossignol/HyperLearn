@@ -2,7 +2,10 @@
 <html lang="ru">
     <head>
         <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Урок - HyperLearn</title>
+        <!-- FIX: Анти-мерцание -->
+        <style>html, body { background-color: #0f172a; }</style>
         <script src="https://cdn.tailwindcss.com"></script>
         <script src="https://unpkg.com/lucide@latest"></script>
         <script
@@ -15,95 +18,190 @@
             src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
         <script
             src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+        <script
+            src="https://www.gstatic.com/firebasejs/8.10.1/firebase-functions.js"></script>
     </head>
-    <body class="text-slate-300 h-screen overflow-hidden flex">
+    <body class="text-slate-300 h-screen overflow-hidden flex bg-[#0f172a]">
 
         <div class="mesh-bg"><div class="blob blob-2"></div></div>
+        <div id="menu-overlay"
+            class="fixed inset-0 bg-black/60 z-30 hidden lg:hidden backdrop-blur-sm"></div>
 
         <!-- SIDEBAR -->
-        <aside class="w-80 glass-panel flex flex-col z-20 hidden md:flex">
-            <div class="p-6 border-b border-white/10">
-                <a href="index.html"
-                    class="flex items-center gap-2 text-indigo-400 font-bold hover:text-white transition"><i
-                        data-lucide="arrow-left"></i> Назад</a>
-                <p id="course-title-display"
-                    class="mt-4 text-white font-bold text-lg">Загрузка...</p>
+        <aside id="mobile-menu"
+            class="fixed lg:static inset-y-0 left-0 w-80 glass-panel border-r border-white/10 z-50 flex flex-col transition-transform duration-300 h-full bg-[#0f172a]/95 backdrop-blur-xl -translate-x-full lg:translate-x-0">
+            <div class="p-6 flex items-center justify-between shrink-0">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold shadow-lg">
+                        <i data-lucide="database"></i>
+                    </div>
+                    <span
+                        class="text-xl font-bold text-white tracking-tight">HyperLearn</span>
+                </div>
+                <button id="close-menu-btn"
+                    class="lg:hidden text-slate-400 hover:text-white"><i
+                        data-lucide="x"></i></button>
             </div>
-            <div id="sidebar-list"
-                class="flex-1 overflow-y-auto p-4 space-y-2"></div>
+
+            <nav class="px-4 space-y-2 mt-2 shrink-0">
+                <a href="index.html"
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition font-medium">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                    Дашборд
+                </a>
+                <a href="course.html"
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl bg-indigo-600 text-white font-medium shadow-lg">
+                    <i data-lucide="play-circle" class="w-5 h-5"></i> Мои курсы
+                </a>
+                <a href="mentor.html"
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition font-medium">
+                    <i data-lucide="bot" class="w-5 h-5 text-indigo-400"></i> AI
+                    Ментор
+                </a>
+            </nav>
+
+            <div id="course-lesson-menu"
+                class="flex-1 flex flex-col min-h-0 mt-4 hidden">
+                <div
+                    class="px-6 py-4 border-y border-white/5 bg-slate-900/30 backdrop-blur-sm shrink-0">
+                    <a href="course.html"
+                        class="flex items-center gap-2 text-indigo-400 font-bold hover:text-indigo-300 transition text-xs uppercase tracking-wider mb-2">
+                        <i data-lucide="arrow-left" class="w-3 h-3"></i> К
+                        списку курсов
+                    </a>
+                    <p id="course-title-display"
+                        class="text-white font-bold text-lg leading-tight">Загрузка...</p>
+                </div>
+                <div id="sidebar-list"
+                    class="flex-1 overflow-y-auto p-3 space-y-1 custom-scrollbar pb-20"></div>
+            </div>
+
+            <!-- FIX: Кнопка выхода -->
+            <div class="p-4 border-t border-white/10 mt-auto shrink-0">
+                <button onclick="logout()"
+                    class="flex items-center gap-3 w-full p-2 rounded-xl hover:bg-white/5 transition group text-left">
+                    <img
+                        class="w-10 h-10 rounded-full border border-indigo-500 bg-slate-800 user-avatar-img"
+                        src>
+                    <div class="flex-1 overflow-hidden">
+                        <p
+                            class="text-sm font-bold text-white truncate user-display-name">Студент</p>
+                        <p class="text-xs text-indigo-400 font-medium">Выйти</p>
+                    </div>
+                    <i data-lucide="log-out"
+                        class="w-5 h-5 text-slate-500 group-hover:text-red-400 transition"></i>
+                </button>
+            </div>
         </aside>
 
-        <!-- MAIN -->
-        <main class="flex-1 flex flex-col h-full relative overflow-y-auto">
-            <div class="p-6 md:p-10 max-w-6xl mx-auto w-full space-y-8">
+        <main
+            class="flex-1 flex flex-col h-full relative overflow-y-auto bg-slate-900/50">
+            <header id="course-page-header"
+                class="h-16 border-b border-white/5 flex items-center justify-between px-6 bg-slate-900/80 backdrop-blur sticky top-0 z-30 lg:hidden shrink-0">
+                <button id="burger-btn"
+                    class="text-white p-2 hover:bg-white/10 rounded-lg transition"><i
+                        data-lucide="menu"></i></button>
+                <h1 class="text-lg font-bold text-white">Урок</h1>
+                <div class="w-6"></div>
+            </header>
 
-                <!-- VIDEO -->
-                <div id="video-wrapper-clickable"
-                    class="aspect-video bg-black/50 rounded-2xl overflow-hidden border border-white/10 relative group cursor-pointer shadow-2xl"
-                    onclick="alert('Выберите урок!')">
-                    <div
-                        class="absolute inset-0 flex items-center justify-center group-hover:scale-110 transition duration-500">
-                        <div
-                            class="w-20 h-20 bg-indigo-600 rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(79,70,229,0.5)]">
-                            <i data-lucide="play"
-                                class="w-8 h-8 text-white ml-1"></i>
-                        </div>
+            <div class="p-4 md:p-8 lg:p-10 max-w-7xl mx-auto w-full flex-1">
+                <div id="course-selection-menu"
+                    class="hidden animate-fade-in-up">
+                    <h1
+                        class="text-3xl md:text-4xl font-bold text-white mb-2">Библиотека
+                        знаний</h1>
+                    <p class="text-slate-400 mb-8 text-lg">Выберите направление
+                        для старта</p>
+                    <div id="course-selection-grid">
+                        <div class="loading-placeholder text-slate-500">Загрузка
+                            курсов...</div>
                     </div>
-                    <div
-                        class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent pointer-events-none"></div>
-                    <h1 id="lesson-title-main"
-                        class="absolute bottom-6 left-8 text-2xl font-bold text-white">Выберите
-                        урок</h1>
                 </div>
 
-                <!-- TABS & CONTENT -->
-                <div class="glass-panel rounded-2xl p-1">
-                    <div class="flex gap-1 p-1 bg-slate-900/50 rounded-xl mb-4">
-                        <button onclick="switchTab('desc')" id="tab-btn-desc"
-                            class="flex-1 py-3 rounded-lg font-medium bg-indigo-600 text-white shadow transition">Описание</button>
-                        <button onclick="switchTab('homework')"
-                            id="tab-btn-homework"
-                            class="flex-1 py-3 rounded-lg font-medium text-slate-400 hover:text-white hover:bg-white/5 transition">Домашнее
-                            задание (AI)</button>
-                    </div>
-
-                    <div class="p-6 min-h-[300px]">
-                        <div id="tab-desc" class="tab-content active">
-                            <div class="prose prose-invert max-w-none">
-                                <h3>Добро пожаловать</h3>
-                                <p>Выберите урок в меню слева. Следующий урок
-                                    откроется только после прохождения
-                                    текущего.</p>
+                <div id="lesson-area-wrapper"
+                    class="hidden space-y-6 animate-fade-in-up">
+                    <div id="video-wrapper-clickable"
+                        class="aspect-video bg-black rounded-2xl overflow-hidden border border-white/10 relative group cursor-pointer shadow-2xl shadow-black/50">
+                        <div
+                            class="absolute inset-0 flex items-center justify-center">
+                            <div
+                                class="w-20 h-20 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center group-hover:scale-110 transition duration-500 border border-white/20">
+                                <i data-lucide="loader-2"
+                                    class="w-8 h-8 text-white animate-spin"></i>
                             </div>
                         </div>
+                    </div>
 
-                        <div id="tab-homework" class="tab-content">
-                            <h3
-                                class="text-xl text-white font-bold mb-4 flex items-center gap-2"><i
-                                    data-lucide="brain-circuit"
-                                    class="text-indigo-400"></i> Проверка знаний
-                                AI</h3>
-                            <p id="homework-task-desc" class="mb-4">Здесь будет
-                                текст задания...</p>
-                            <textarea id="homework-answer"
-                                class="w-full h-40 bg-slate-900/50 border border-slate-700 rounded-xl p-4 text-white focus:border-indigo-500 outline-none transition mb-4"
-                                placeholder="Напишите ваш код или ответ..."></textarea>
+                    <div
+                        class="glass-panel rounded-2xl p-1 border border-white/5 bg-[#1e293b]/50">
+                        <div class="flex gap-1 p-1 bg-black/20 rounded-xl mb-6">
+                            <button onclick="switchTab('desc')"
+                                id="tab-btn-desc"
+                                class="flex-1 py-3 rounded-lg font-bold text-sm bg-indigo-600 text-white shadow-lg transition-all">Описание</button>
+                            <button onclick="switchTab('homework')"
+                                id="tab-btn-homework"
+                                class="flex-1 py-3 rounded-lg font-bold text-sm text-slate-400 hover:text-white hover:bg-white/5 transition-all">Домашнее
+                                задание</button>
+                        </div>
 
-                            <div class="flex gap-4">
-                                <button
-                                    onclick="submitHomeworkAI(document.getElementById('homework-task-desc').innerText)"
-                                    class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg hover:shadow-indigo-500/25 transition">Проверить</button>
-                                <button id="complete-lesson-btn"
-                                    class="border border-green-500/50 text-green-400 px-8 py-3 rounded-xl font-bold hover:bg-green-500/10 transition">Завершить
-                                    урок</button>
+                        <div class="px-6 pb-6 min-h-[200px]">
+                            <div id="tab-desc" class="tab-content active"
+                                style="display: block;">
+                                <h2 id="lesson-title-main"
+                                    class="text-2xl font-bold text-white mb-4">Название
+                                    урока</h2>
+                                <div
+                                    class="prose prose-invert max-w-none text-slate-300">
+                                    <p>Смотрите видео внимательно. После
+                                        просмотра нажмите кнопку завершения,
+                                        чтобы открыть следующий урок.</p>
+                                </div>
+                                <div class="mt-8 border-t border-white/5 pt-6">
+                                    <button
+                                        class="complete-lesson-btn-dynamic w-full md:w-auto bg-green-600 hover:bg-green-500 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-green-500/20 transition flex items-center justify-center gap-2">
+                                        <i data-lucide="check-circle"
+                                            class="w-5 h-5"></i> Завершить урок
+                                    </button>
+                                </div>
                             </div>
 
-                            <div id="ai-grade-result" class="mt-6"></div>
+                            <div id="tab-homework" class="tab-content hidden"
+                                style="display: none;">
+                                <div class="py-4">
+                                    <h3
+                                        class="text-xl font-bold text-white mb-2 flex items-center gap-2"><i
+                                            data-lucide="brain-circuit"
+                                            class="text-indigo-400"></i>
+                                        Задание</h3>
+                                    <p id="homework-task-desc"
+                                        class="text-slate-400 mb-4">Задание
+                                        загружается...</p>
+                                    <textarea id="homework-answer"
+                                        class="w-full bg-slate-900/80 border border-slate-700 rounded-xl p-4 text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition min-h-[150px]"
+                                        placeholder="Напишите ваш ответ или код здесь..."></textarea>
+                                    <div id="ai-grade-result"
+                                        class="mt-4 mb-4"></div>
+                                    <div
+                                        class="flex flex-col md:flex-row gap-4 mt-6">
+                                        <button id="submit-homework-btn"
+                                            class="bg-indigo-600 hover:bg-indigo-500 text-white px-8 py-3 rounded-xl font-bold shadow-lg transition flex items-center justify-center gap-2"><i
+                                                data-lucide="send"
+                                                class="w-4 h-4"></i> Проверить
+                                            AI</button>
+                                        <button
+                                            class="complete-lesson-btn-dynamic bg-green-600/20 border border-green-500/50 text-green-400 hover:bg-green-600/30 px-8 py-3 rounded-xl font-bold transition flex items-center justify-center gap-2">Завершить
+                                            урок</button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </main>
-        <script src="script.js"></script>
+
+        <script type="module" src="js/app.js"></script>
     </body>
 </html>

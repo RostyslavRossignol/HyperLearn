@@ -11,238 +11,338 @@
         <script src="https://www.google.com/recaptcha/api.js" async
             defer></script>
 
+        <!-- Firebase SDK -->
         <script
             src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
         <script
             src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
         <script
             src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+        <script
+            src="https://www.gstatic.com/firebasejs/8.10.1/firebase-functions.js"></script>
 
+        <!-- FIX: Глобальное масштабирование интерфейса (80% = уменьшение на 20%) -->
+        <style>
+        html {
+            font-size: 80%; /* Это заставит 1rem быть равным ~12.8px вместо 16px */
+        }
+    </style>
     </head>
     <body class="bg-[#0f172a] text-white overflow-x-hidden relative h-screen">
 
+        <!-- Canvas z-10 (Над фоном) -->
         <canvas id="network-canvas"
-            class="fixed inset-0 z-0 pointer-events-none"></canvas>
+            class="fixed inset-0 z-10 pointer-events-none"></canvas>
+
+        <!-- Фон z-0 -->
         <div
-            class="fixed inset-0 z-0 bg-gradient-to-b from-[#0f172a]/70 via-[#0f172a]/40 to-[#0f172a] pointer-events-none"></div>
+            class="fixed inset-0 z-0 bg-gradient-to-b from-[#0f172a]/90 via-[#0f172a]/70 to-[#0f172a] pointer-events-none"></div>
 
         <header
-            class="fixed top-0 w-full z-50 py-4 px-6 md:px-12 flex justify-between items-center backdrop-blur-sm border-b border-white/5">
-            <div class="flex items-center gap-3">
+            class="fixed top-0 w-full z-50 py-6 px-6 md:px-12 flex justify-between items-center backdrop-blur-sm border-b border-white/5">
+            <div class="flex items-center gap-4">
                 <div
-                    class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg"><i
-                        data-lucide="database"
-                        class="w-5 h-5 text-white"></i></div>
-                <span class="font-bold text-xl font-sans">HyperLearn <span
-                        class="text-indigo-400 font-light">DS</span></span>
+                    class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-xl shadow-indigo-500/20">
+                    <i data-lucide="database" class="w-7 h-7 text-white"></i>
+                </div>
+                <span
+                    class="font-bold text-2xl font-sans tracking-tight">HyperLearn
+                    <span class="text-indigo-400 font-light">DS</span></span>
             </div>
             <div class="flex gap-4 items-center">
                 <button onclick="openAuth('login')"
-                    class="text-slate-300 hover:text-white font-medium text-sm px-3 py-2 transition hover:bg-white/5 rounded-lg">Войти</button>
+                    class="text-slate-300 hover:text-white font-bold text-base px-4 py-2 transition hover:bg-white/5 rounded-xl">Войти</button>
                 <button onclick="openAuth('register')"
-                    class="px-5 py-2 bg-white/10 hover:bg-white/20 border border-white/10 rounded-full text-sm font-semibold transition backdrop-blur-md">Регистрация</button>
+                    class="px-6 py-3 bg-white/10 hover:bg-white/20 border border-white/10 rounded-xl text-base font-bold transition backdrop-blur-md">Регистрация</button>
             </div>
         </header>
 
         <main
-            class="relative z-10 h-full flex flex-col items-center justify-center px-6 text-center">
+            class="relative z-20 h-full flex flex-col items-center justify-center px-6 text-center">
             <div
-                class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-bold mb-6 animate-float">
-                <span class="relative flex h-2 w-2"><span
-                        class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span><span
-                        class="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span></span>
+                class="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-sm font-bold mb-8 animate-float shadow-lg shadow-indigo-900/20">
+                <span class="relative flex h-3 w-3">
+                    <span
+                        class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                    <span
+                        class="relative inline-flex rounded-full h-3 w-3 bg-indigo-500"></span>
+                </span>
                 Старт: в любое время. Занимайся в удобном темпе
             </div>
-            <h1 class="text-5xl md:text-7xl font-bold mb-6 leading-tight">Data
-                Science <br><span
-                    class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 text-glow">Будущего</span></h1>
+
+            <!-- ОЧЕНЬ КРУПНЫЙ ЗАГОЛОВОК -->
+            <h1
+                class="text-6xl md:text-8xl font-extrabold mb-8 leading-tight tracking-tight drop-shadow-2xl">
+                Data Science <br>
+                <span
+                    class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 text-glow">Будущего</span>
+            </h1>
+
             <p
-                class="text-slate-400 text-lg md:text-xl max-w-2xl mb-10 leading-relaxed">Освой
-                Python, Machine Learning и Нейросети. Твой личный <span
-                    class="text-indigo-400">AI Ментор</span> ждет.</p>
-            <div class="flex flex-col md:flex-row gap-4 w-full md:w-auto">
+                class="text-slate-300 text-xl md:text-2xl max-w-3xl mb-12 leading-relaxed font-light">
+                Освой Python, Machine Learning и Нейросети. <br>Твой личный
+                <span class="text-indigo-400 font-semibold">AI Ментор</span> уже
+                ждет тебя внутри.
+            </p>
+
+            <div class="flex flex-col md:flex-row gap-6 w-full md:w-auto">
                 <button onclick="openAuth('register')"
-                    class="px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 rounded-xl font-bold text-lg shadow-xl shadow-indigo-500/30 transform hover:scale-105 transition flex items-center justify-center gap-2">Начать
-                    обучение <i data-lucide="arrow-right"
-                        class="w-5 h-5"></i></button>
+                    class="px-10 py-5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 rounded-2xl font-bold text-xl shadow-2xl shadow-indigo-500/40 transform hover:scale-105 transition flex items-center justify-center gap-3">
+                    Начать обучение <i data-lucide="arrow-right"
+                        class="w-6 h-6"></i>
+                </button>
                 <button onclick="openProgram()"
-                    class="px-8 py-4 glass-panel rounded-xl font-bold text-lg hover:bg-white/10 transition flex items-center justify-center gap-2"><i
-                        data-lucide="play-circle"
-                        class="w-5 h-5 text-indigo-400"></i> Программа
-                    курса</button>
+                    class="px-10 py-5 glass-panel rounded-2xl font-bold text-xl hover:bg-white/10 transition flex items-center justify-center gap-3 border border-white/10">
+                    <i data-lucide="play-circle"
+                        class="w-6 h-6 text-indigo-400"></i> Программа курса
+                </button>
             </div>
         </main>
 
+        <!-- PROGRAM OVERLAY (Модалка программы) -->
         <div id="program-overlay"
             class="fixed inset-0 z-[60] bg-black/90 backdrop-blur-md hidden flex justify-center p-4 transition-opacity duration-300 opacity-0 overflow-y-auto">
             <div
                 class="relative w-full max-w-5xl mt-10 mb-10 animate-fade-in-up">
                 <button onclick="closeProgram()"
                     class="absolute -top-12 right-0 md:-right-12 text-slate-400 hover:text-white transition z-10"><i
-                        data-lucide="x" class="w-8 h-8"></i></button>
+                        data-lucide="x" class="w-10 h-10"></i></button>
                 <div
                     class="glass-panel-solid rounded-2xl p-6 md:p-10 shadow-2xl border border-indigo-500/20">
                     <h2
-                        class="text-3xl font-bold text-white mb-2 text-center">Полная
+                        class="text-4xl font-bold text-white mb-6 text-center">Полная
                         программа обучения</h2>
                     <div id="program-content" class="space-y-4"></div>
-                    <div class="mt-8 text-center pt-6 border-t border-white/10">
+                    <div
+                        class="mt-10 text-center pt-8 border-t border-white/10">
                         <button onclick="closeProgram(); openAuth('register')"
-                            class="px-8 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition shadow-lg">Присоединиться</button>
+                            class="px-10 py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition shadow-lg text-lg">Присоединиться
+                            сейчас</button>
                     </div>
                 </div>
             </div>
         </div>
 
+        <!-- AUTH OVERLAY (Модалка входа) -->
         <div id="auth-overlay"
             class="fixed inset-0 z-[60] bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4 transition-opacity duration-300 opacity-0">
-            <div class="relative w-full max-w-md h-[550px] perspective-1000">
+            <div class="relative w-full max-w-md h-[600px] perspective-1000">
                 <button onclick="closeAuth()"
                     class="absolute -top-12 right-0 text-slate-400 hover:text-white transition z-10"><i
                         data-lucide="x" class="w-8 h-8"></i></button>
                 <div id="auth-card-inner"
                     class="relative w-full h-full transition-transform duration-700 transform-style-3d">
+
+                    <!-- LOGIN -->
                     <div
-                        class="absolute inset-0 glass-panel-solid rounded-2xl p-8 flex flex-col backface-hidden shadow-2xl">
-                        <h2 class="text-2xl font-bold text-white mb-2">Вход</h2>
-                        <form onsubmit="handleAuthSubmit(event)" id="login-form"
-                            class="space-y-4 flex-1">
+                        class="absolute inset-0 glass-panel-solid rounded-3xl p-10 flex flex-col backface-hidden shadow-2xl bg-[#0f172a] border border-white/10">
+                        <h2 class="text-3xl font-bold text-white mb-6">Вход</h2>
+                        <form id="login-form" onsubmit="handleAuthSubmit(event)"
+                            class="space-y-5 flex-1">
                             <input type="email" placeholder="Email"
-                                class="w-full bg-slate-900/50 border border-slate-700 rounded-xl py-3 px-4 text-white focus:border-indigo-500 outline-none">
-                            <input type="password" placeholder="Пароль"
-                                class="w-full bg-slate-900/50 border border-slate-700 rounded-xl py-3 px-4 text-white focus:border-indigo-500 outline-none">
+                                class="w-full bg-slate-900/50 border border-slate-700 rounded-xl py-4 px-5 text-white focus:border-indigo-500 outline-none transition text-lg">
+
+                            <!-- Password Field with Toggle -->
+                            <div class="relative">
+                                <input type="password" id="login-password"
+                                    placeholder="Пароль"
+                                    class="w-full bg-slate-900/50 border border-slate-700 rounded-xl py-4 px-5 text-white focus:border-indigo-500 outline-none transition text-lg pr-12">
+                                <button type="button"
+                                    onclick="togglePassword('login-password', 'login-eye')"
+                                    class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition">
+                                    <i data-lucide="eye" id="login-eye"
+                                        class="w-6 h-6"></i>
+                                </button>
+                            </div>
+
                             <button type="submit"
-                                class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3.5 rounded-xl shadow-lg mt-4">Войти</button>
+                                class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 rounded-xl shadow-lg mt-6 text-lg transition transform hover:scale-[1.02]">Войти</button>
                         </form>
                         <div
                             class="mt-6 text-center border-t border-white/5 pt-6">
                             <button onclick="toggleAuthMode()"
-                                class="text-indigo-400 hover:text-indigo-300 font-semibold text-sm">Регистрация</button>
+                                class="text-indigo-400 hover:text-indigo-300 font-semibold text-base">Нет
+                                аккаунта? Регистрация</button>
                         </div>
                     </div>
+
+                    <!-- REGISTER -->
                     <div
-                        class="absolute inset-0 glass-panel-solid rounded-2xl p-8 flex flex-col backface-hidden rotate-y-180 shadow-2xl">
+                        class="absolute inset-0 glass-panel-solid rounded-3xl p-10 flex flex-col backface-hidden rotate-y-180 shadow-2xl bg-[#0f172a] border border-white/10">
                         <h2
-                            class="text-2xl font-bold text-white mb-2">Регистрация</h2>
-                        <form onsubmit="handleAuthSubmit(event)"
-                            id="register-form"
-                            class="space-y-3 flex-1 overflow-y-auto hide-scrollbar">
+                            class="text-3xl font-bold text-white mb-6">Регистрация</h2>
+                        <form id="register-form"
+                            onsubmit="handleAuthSubmit(event)"
+                            class="space-y-4 flex-1 overflow-y-auto hide-scrollbar">
                             <input type="text" placeholder="Имя"
-                                class="w-full bg-slate-900/50 border border-slate-700 rounded-xl py-3 px-4 text-white focus:border-indigo-500 outline-none">
+                                class="w-full bg-slate-900/50 border border-slate-700 rounded-xl py-4 px-5 text-white focus:border-indigo-500 outline-none transition text-lg">
                             <input type="email" placeholder="Email"
-                                class="w-full bg-slate-900/50 border border-slate-700 rounded-xl py-3 px-4 text-white focus:border-indigo-500 outline-none">
-                            <input type="password" placeholder="Пароль"
-                                class="w-full bg-slate-900/50 border border-slate-700 rounded-xl py-3 px-4 text-white focus:border-indigo-500 outline-none">
-                            <div class="flex justify-center mt-2"><div
+                                class="w-full bg-slate-900/50 border border-slate-700 rounded-xl py-4 px-5 text-white focus:border-indigo-500 outline-none transition text-lg">
+
+                            <!-- Password Field with Toggle -->
+                            <div class="relative">
+                                <input type="password" id="register-password"
+                                    placeholder="Пароль"
+                                    class="w-full bg-slate-900/50 border border-slate-700 rounded-xl py-4 px-5 text-white focus:border-indigo-500 outline-none transition text-lg pr-12">
+                                <button type="button"
+                                    onclick="togglePassword('register-password', 'register-eye')"
+                                    class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition">
+                                    <i data-lucide="eye" id="register-eye"
+                                        class="w-6 h-6"></i>
+                                </button>
+                            </div>
+
+                            <div
+                                class="flex justify-center mt-2 scale-90 origin-center"><div
                                     id="g-recaptcha" class="g-recaptcha"
                                     data-sitekey="6LfhgSAsAAAAAAA8TmABhdTTaO0BLEuGR4Ptdgsa"></div></div>
                             <button type="submit"
-                                class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold py-3.5 rounded-xl shadow-lg mt-2">Создать</button>
+                                class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold py-4 rounded-xl shadow-lg mt-4 text-lg transition transform hover:scale-[1.02]">Создать
+                                аккаунт</button>
                         </form>
                         <div
                             class="mt-4 text-center border-t border-white/5 pt-4">
                             <button onclick="toggleAuthMode()"
-                                class="text-indigo-400 hover:text-indigo-300 font-semibold text-sm">Войти</button>
+                                class="text-indigo-400 hover:text-indigo-300 font-semibold text-base">Уже
+                                есть аккаунт? Войти</button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <script src="script.js"></script>
-
+        <!-- GLOBAL UI FUNCTIONS -->
         <script>
+        function openAuth(mode) {
+            const overlay = document.getElementById('auth-overlay');
+            const card = document.getElementById('auth-card-inner');
+            overlay.classList.remove('hidden');
+            setTimeout(() => overlay.classList.remove('opacity-0'), 10);
+            if(mode === 'register') card.classList.add('flipped');
+            else card.classList.remove('flipped');
+        }
+        function closeAuth() {
+            const overlay = document.getElementById('auth-overlay');
+            overlay.classList.add('opacity-0');
+            setTimeout(() => overlay.classList.add('hidden'), 300);
+        }
+        function toggleAuthMode() {
+            document.getElementById('auth-card-inner').classList.toggle('flipped');
+        }
+        
+        // FIX: Функция для переключения видимости пароля
+        function togglePassword(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.setAttribute('data-lucide', 'eye-off');
+            } else {
+                input.type = 'password';
+                icon.setAttribute('data-lucide', 'eye');
+            }
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        // FIX: Полная база данных курсов для лендинга
         const LANDING_COURSES_DB = {
-            // ... (ВЕСЬ ВАШ LANDING_COURSES_DB) ...
-            "python": {
+            python: {
                 title: "КУРС 1: Python для Data Science",
                 color: "indigo",
                 icon: "code-2",
                 modules: [
-                    { title: "Модуль 0: Введение", lessons: ["0.1 Python в ML и Data Science", "0.2 Пример: Анализ изображений"] },
-                    { title: "Модуль 1: Основы Python", lessons: ["1.1 Переменные и типы", "1.2 Типы данных (продолжение)", "1.3 Циклы for и while", "1.4 Условный оператор If/Else"] },
-                    { title: "Модуль 2: Структуры данных", lessons: ["2.1 Функции: Основы", "2.2 Аргументы функции", "2.3 Call stack и Scope", "2.4 Ссылочная модель данных", "2.5 Срезы (Slicing)"] },
-                    { title: "Модуль 3: Окружение разработки", lessons: ["3.1 Библиотеки и PIP", "3.2 Anaconda и Conda", "3.3 Виртуальное окружение (venv)"] },
-                    { title: "Модуль 4: Инструменты аналитика", lessons: ["4.1 Jupyter Notebook", "4.2 Введение в NumPy", "4.3 Введение в Pandas", "4.4 Matplotlib"] },
-                    { title: "Модуль 5: Pandas Deep Dive", lessons: ["5.1 Чтение файлов (CSV, Excel)", "5.2 Фильтрация и сортировка", "5.3 Группировка (GroupBy)", "5.4 Визуализация (Seaborn)"] },
-                    { title: "Модуль 6: Работа с SQL", lessons: ["6.1 Реляционные базы данных", "6.2 SELECT, JOIN", "6.3 SQL внутри Python"] },
-                    { title: "Модуль 7: ООП в Python", lessons: ["7.1 Классы и объекты", "7.2 Наследование, Инкапсуляция"] },
-                    { title: "Модуль 8: Git", lessons: ["8.1 Введение в Git", "8.2 Ветки и слияние", "8.3 GitHub Remote"] },
-                    { title: "Модуль 9: Backend (FastAPI)", lessons: ["9.1 HTTP, JSON", "9.2 Первое API на FastAPI", "9.3 Pydantic модели"] }
+                    { title: "Модуль 0: Введение", lessons: ["0.1 Python в ML", "0.2 Анализ изображений"] },
+                    { title: "Модуль 1: Основы Python", lessons: ["1.1 Переменные", "1.2 Типы данных", "1.3 Циклы", "1.4 Условный оператор If"] },
+                    { title: "Модуль 2: Структуры данных", lessons: ["2.1 Функции", "2.2 Аргументы", "2.3 Call stack", "2.4 Ссылочная модель", "2.5 Модель памяти", "2.6 Изменяемые типы", "2.7 Срезы"] },
+                    { title: "Модуль 3: Окружение", lessons: ["3.1 Библиотеки", "3.2 Anaconda", "3.3 Virtual Env"] },
+                    { title: "Модуль 4: Инструменты", lessons: ["4.1 Jupyter", "4.6 Numpy", "4.7 Pandas", "4.8 Matplotlib"] },
+                    { title: "Модуль 5: Pandas", lessons: ["5.1 Чтение файлов", "5.2 Фильтрация", "5.5 Группировка", "5.7 Визуализация"] },
+                    { title: "Модуль 6: SQL", lessons: ["6.1 Базы данных", "6.2 SELECT", "6.3 JOIN", "6.4 SQL в Python"] },
+                    { title: "Модуль 7: ООП", lessons: ["7.1 Классы", "7.2 Принципы ООП 1", "7.3 Принципы ООП 2"] },
+                    { title: "Модуль 8: Git", lessons: ["8.1 Введение", "8.2 Ветки", "8.7 GitHub"] },
+                    { title: "Модуль 9: Backend", lessons: ["9.1 HTTP", "9.3 GET", "9.4 POST"] },
+                    { title: "Модуль 11: Airflow", lessons: ["11.1 Введение", "11.2 Устройство", "11.4 Operator"] },
+                    { title: "Модуль 12: Best Practices", lessons: ["12.1 Шаблон", "12.3 SQL Injection"] }
                 ]
             },
-            "algo": {
-                title: "КУРС 2: Алгоритмы и Структуры Данных",
+            algo: {
+                title: "КУРС 2: Алгоритмы",
                 color: "blue",
                 icon: "cpu",
                 modules: [
-                    { title: "Модуль 1: Анализ алгоритмов", lessons: ["1.1 Big O Notation", "1.2 Оценка сложности кода"] },
-                    { title: "Модуль 2: Базовые структуры", lessons: ["2.1 Массивы и Динамические массивы", "2.2 Связные списки"] },
-                    { title: "Модуль 3: Графы и Деревья", lessons: ["3.1 Поиск в ширину (BFS)", "3.2 Поиск в глубину (DFS)"] },
-                    { title: "Модуль 4: Алгоритмические подходы", lessons: ["4.1 Рекурсия", "4.2 Динамическое программирование"] }
+                    { title: "Модуль 1: Введение", lessons: ["1.1 Собеседования"] },
+                    { title: "Модуль 2: Сложность", lessons: ["2.1 Big O", "2.2 Оценка сложности"] },
+                    { title: "Модуль 3: Списки", lessons: ["3.1 Массивы", "3.2 Связные списки"] },
+                    { title: "Модуль 4: Графы", lessons: ["4.1 Введение", "4.2 BFS/DFS", "4.5 Кучи"] },
+                    { title: "Модуль 5: Подходы", lessons: ["5.1 Рекурсия", "5.2 Динамическое прог."] }
                 ]
             },
-            "stats": {
-                title: "КУРС 3: Математическая статистика",
+            stats: {
+                title: "КУРС 3: Мат. Статистика",
                 color: "green",
                 icon: "bar-chart-2",
                 modules: [
-                    { title: "Модуль 1: Теория вероятностей", lessons: ["1.1 Основы вероятности", "1.2 Формула Байеса"] },
-                    { title: "Модуль 2: Распределения", lessons: ["2.1 Нормальное распределение", "2.2 Центральная Предельная Теорема"] },
-                    { title: "Модуль 3: Проверка гипотез", lessons: ["3.1 p-value и уровень значимости", "3.2 A/B Тестирование"] }
+                    { title: "Модуль 1: Вероятность", lessons: ["1.1 Статистика в ML", "1.3 Байес"] },
+                    { title: "Модуль 2: Доверительные интервалы", lessons: ["2.1 Зачем нужны", "2.4 ЦПТ"] },
+                    { title: "Модуль 4: Гипотезы", lessons: ["4.1 Проверка гипотез"] },
+                    { title: "Модуль 7: A/B Тесты", lessons: ["7.1 Дизайн экспериментов"] }
                 ]
             },
-            "ml": {
+            ml: {
                 title: "КУРС 4: Machine Learning",
                 color: "pink",
                 icon: "brain-circuit",
                 modules: [
-                    { title: "Модуль 1: Введение в ML", lessons: ["1.1 Виды обучения", "1.2 Метрики качества"] },
-                    { title: "Модуль 2: Линейные модели", lessons: ["2.1 Линейная регрессия", "2.2 Градиентный спуск", "2.3 Регуляризация"] },
-                    { title: "Модуль 3: Деревянные модели", lessons: ["3.1 Решающие деревья", "3.2 Случайный лес", "3.3 Градиентный бустинг"] },
-                    { title: "Модуль 4: Кластеризация", lessons: ["4.1 Метод K-Means", "4.2 Алгоритм DBSCAN"] }
+                    { title: "Модуль 1: Введение", lessons: ["1.1 Виды ML", "1.2 Метрики"] },
+                    { title: "Модуль 2: Метрики", lessons: ["2.3 Loss function", "2.5 MSE/MAE"] },
+                    { title: "Модуль 3: Линейная регрессия", lessons: ["3.3 OLS", "3.7 Практика"] },
+                    { title: "Модуль 4: Градиентный спуск", lessons: ["4.1 Принцип работы"] },
+                    { title: "Модуль 6: Регуляризация", lessons: ["6.1 Переобучение", "6.2 L1/L2"] },
+                    { title: "Модуль 8: Feature Engineering", lessons: ["8.1 Пропуски", "8.3 TF-IDF"] },
+                    { title: "Модуль 17: Деревья", lessons: ["17.1 Decision Trees", "17.4 Практика"] },
+                    { title: "Модуль 19: Ансамбли", lessons: ["19.2 Random Forest"] },
+                    { title: "Модуль 20: Бустинг", lessons: ["20.2 Gradient Boosting", "20.4 CatBoost"] },
+                    { title: "Модуль 21: Кластеризация", lessons: ["21.2 K-Means", "21.3 DBSCAN"] }
                 ]
             },
-            "dl": {
+            dl: {
                 title: "КУРС 5: Deep Learning",
                 color: "cyan",
                 icon: "network",
                 modules: [
                     { title: "Модуль 1: Основы DL", lessons: ["1.1 Перцептрон", "1.2 Backpropagation"] },
-                    { title: "Модуль 2: Сверточные сети (CNN)", lessons: ["2.1 Свертка и Пулинг", "2.2 Архитектуры: ResNet"] },
-                    { title: "Модуль 3: NLP", lessons: ["3.1 RNN и LSTM", "3.2 Трансформеры и GPT"] }
+                    { title: "Модуль 2: Обучение", lessons: ["2.1 PyTorch"] },
+                    { title: "Модуль 3: CNN", lessons: ["3.1 Свертки"] },
+                    { title: "Модуль 6: Detection", lessons: ["6.1 YOLO"] },
+                    { title: "Модуль 9: NLP", lessons: ["9.1 RNN/LSTM", "9.2 Attention"] },
+                    { title: "Модуль 10: Transformers", lessons: ["10.2 BERT", "10.3 GPT"] }
                 ]
             },
-            "career": {
+            career: {
                 title: "БОНУС: Карьера",
                 color: "yellow",
                 icon: "briefcase",
                 modules: [
-                    { title: "Модуль 1: Трудоустройство", lessons: ["1.1 Составление резюме для DS", "1.2 Техническое собеседование"] }
+                    { title: "Трудоустройство", lessons: ["1.1 Резюме", "1.2 Гитхаб", "1.3 Собеседования"] }
                 ]
             }
         };
-
+        
         function openProgram() {
-            renderLandingProgram();
-            const overlay = document.getElementById('program-overlay');
-            if(overlay) {
-                overlay.classList.remove('hidden');
-                setTimeout(() => overlay.classList.remove('opacity-0'), 10);
-            }
+             const overlay = document.getElementById('program-overlay');
+             overlay.classList.remove('hidden');
+             setTimeout(() => overlay.classList.remove('opacity-0'), 10);
+             renderLandingProgram(); // Рендер из скрипта ниже
         }
-
         function closeProgram() {
-            const overlay = document.getElementById('program-overlay');
-            if(overlay) {
-                overlay.classList.add('opacity-0');
-                setTimeout(() => overlay.classList.add('hidden'), 300);
-            }
+             const overlay = document.getElementById('program-overlay');
+             overlay.classList.add('opacity-0');
+             setTimeout(() => overlay.classList.add('hidden'), 300);
         }
-
+        
         function renderLandingProgram() {
             const content = document.getElementById('program-content');
-            if (!content || content.children.length > 0) return;
+            if(content.children.length > 0) return;
 
             const courseOrder = ['python', 'algo', 'stats', 'ml', 'dl', 'career'];
             
@@ -280,6 +380,8 @@
             }).join('');
             if(typeof lucide !== 'undefined') lucide.createIcons();
         }
-        </script>
+    </script>
+
+        <script type="module" src="js/app.js"></script>
     </body>
 </html>

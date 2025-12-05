@@ -1,18 +1,199 @@
+/* --- styles.css (Финальная чистая версия: Включает все исправления) --- */
+
 @import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap");
 
 :root {
+    /* Цветовая палитра */
     --color-bg: #0f172a;
     --color-glass: rgba(17, 25, 40, 0.75);
     --color-border: rgba(255, 255, 255, 0.1);
-    --color-lock: #ef4444;
+    --color-lock: #ef4444; /* red-500 */
+    --color-success: #10b981; /* green-500 */
+    --color-primary: #4f46e5; /* indigo-600 */
 }
 
+/* FIX: Жесткий цвет фона и высота для предотвращения белых вспышек */
+html,
 body {
-    background-color: var(--color-bg);
+    background-color: var(--color-bg) !important;
     color: #cbd5e1;
     font-family: "Outfit", sans-serif;
-    overflow-x: hidden;
     margin: 0;
+    height: 100%; /* Важно для spa-ощущения */
+}
+
+/* --- SCROLLBAR UTILITY (Убран "уродливый" скролл) --- */
+.hide-scrollbar::-webkit-scrollbar {
+    width: 0 !important;
+    height: 0 !important;
+    display: none; /* Для Firefox/IE */
+}
+.hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Стилизация рабочего скроллбара (для sidebar, main И НОВОГО ROADMAP) */
+#sidebar-list::-webkit-scrollbar,
+main::-webkit-scrollbar,
+.custom-scrollbar::-webkit-scrollbar {
+    /* Добавили класс .custom-scrollbar */
+    width: 6px;
+    height: 8px; /* Горизонтальный скролл чуть толще */
+}
+#sidebar-list::-webkit-scrollbar-track,
+main::-webkit-scrollbar-track,
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+#sidebar-list::-webkit-scrollbar-thumb,
+main::-webkit-scrollbar-thumb,
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgba(99, 102, 241, 0.4); /* Indigo color */
+    border-radius: 20px;
+}
+#sidebar-list::-webkit-scrollbar-thumb:hover,
+main::-webkit-scrollbar-thumb:hover,
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(99, 102, 241, 0.6);
+}
+
+/* --- SIDEBAR (Мобильное меню) --- */
+.menu-hidden {
+    transform: translateX(-100%);
+}
+
+@media (max-width: 1023px) {
+    #mobile-menu {
+        box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
+    }
+}
+
+/* --- GLASSMORPHISM --- */
+.glass-panel {
+    background: var(--color-glass);
+    backdrop-filter: blur(16px);
+    border-right: 1px solid var(--color-border);
+}
+.glass-panel-solid {
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+.glass-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+.glass-card:hover {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(99, 102, 241, 0.4);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px -10px rgba(99, 102, 241, 0.3);
+}
+
+/* --- BACKGROUND BLOBS (Фоновые пятна) --- */
+.blob-bg {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: 0.3;
+    z-index: -2;
+    pointer-events: none;
+    transition: all 1s;
+}
+
+/* --- MESH BG (для course.html) --- */
+.mesh-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    background: #0f172a;
+    overflow: hidden;
+}
+.mesh-bg .blob {
+    position: absolute;
+    width: 60vw;
+    height: 60vw;
+    border-radius: 50%;
+    background: rgba(79, 70, 229, 0.1);
+    filter: blur(150px);
+    animation: pulse 10s infinite;
+}
+.mesh-bg .blob-2 {
+    background: rgba(192, 38, 211, 0.1);
+    bottom: 5%;
+    left: 5%;
+    animation-delay: -5s;
+}
+@keyframes pulse {
+    0% {
+        transform: scale(1) translate(0, 0);
+        opacity: 0.2;
+    }
+    50% {
+        transform: scale(1.1) translate(50px, -50px);
+        opacity: 0.3;
+    }
+    100% {
+        transform: scale(1) translate(0, 0);
+        opacity: 0.2;
+    }
+}
+
+/* --- LESSONS / PROGRESS (Логика блокировки и стили списка) --- */
+
+/* Заблокированный урок в сайдбаре (ЗАМОЧКИ) */
+.lesson-locked {
+    background-color: rgba(239, 68, 68, 0.1); /* red-500/10 */
+    pointer-events: none;
+    opacity: 0.7;
+}
+.lesson-locked .lesson-icon {
+    /* Замочек - красная иконка на красном фоне */
+    background: var(--color-lock) !important;
+    color: white !important;
+}
+
+/* Стиль для пройденного урока в списке */
+.bg-white\/5 {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Улучшение стиля для активного урока */
+.active-lesson {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Заблокированный курс в Roadmap */
+.roadmap-locked {
+    pointer-events: none;
+    opacity: 0.5;
+    position: relative;
+    transition: none !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* AI GRADE */
+.ai-response-area {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    padding: 1rem;
+    border-radius: 1rem;
+    white-space: pre-wrap;
+    margin-top: 1rem;
+}
+.tab-content {
+    display: none;
+}
+.tab-content.active {
+    display: block;
 }
 
 /* --- 3D FLIP (ПЕРЕВОРОТ КАРТОЧКИ) --- */
@@ -43,17 +224,6 @@ body {
     z-index: 0;
     pointer-events: none;
 }
-.mesh-bg {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: -1;
-    background: #0f172a;
-    overflow: hidden;
-}
-
 @keyframes fadeInUp {
     from {
         opacity: 0;
@@ -67,9 +237,6 @@ body {
 .animate-fade-in-up {
     animation: fadeInUp 0.5s ease-out forwards;
 }
-.animate-float {
-    animation: float 6s ease-in-out infinite;
-}
 @keyframes float {
     0%,
     100% {
@@ -78,57 +245,6 @@ body {
     50% {
         transform: translateY(-10px);
     }
-}
-
-/* --- GLASSMORPHISM --- */
-.glass-panel {
-    background: var(--color-glass);
-    backdrop-filter: blur(16px);
-    border-right: 1px solid var(--color-border);
-}
-.glass-panel-solid {
-    background: rgba(15, 23, 42, 0.95);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-}
-.glass-card {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(10px);
-    transition: all 0.3s ease;
-}
-.glass-card:hover {
-    background: rgba(255, 255, 255, 0.07);
-    border-color: rgba(99, 102, 241, 0.4);
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px -10px rgba(99, 102, 241, 0.3);
-}
-
-/* --- UI КОМПОНЕНТЫ --- */
-.lesson-locked {
-    background-color: rgba(239, 68, 68, 0.1);
-    pointer-events: none;
-    opacity: 0.5;
-}
-.lesson-locked .lesson-icon {
-    background: var(--color-lock);
-    color: white;
-}
-.ai-response-area {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(99, 102, 241, 0.3);
-    padding: 1rem;
-    border-radius: 1rem;
-    white-space: pre-wrap;
-    margin-top: 1rem;
-}
-.recaptcha-wrapper {
-    transform: scale(0.85);
-    transform-origin: 50% 0;
-    margin-top: 10px;
-    display: flex;
-    justify-content: center;
 }
 
 /* --- АККОРДЕОН (ПРОГРАММА) --- */
@@ -157,4 +273,64 @@ details[open] .rotate-icon {
 }
 .opacity-0 {
     opacity: 0 !important;
+}
+.aspect-square {
+    /* Для квадратных карточек курсов */
+    aspect-ratio: 1 / 1;
+}
+
+/* Стили для карточки шага в Roadmap */
+.roadmap-step {
+    position: relative;
+    min-width: 280px; /* Чтобы карточки не сжимались в скролле */
+}
+
+/* --- Tailwind JIT Placeholder (для динамических цветов) --- */
+/*
+    Эти классы используются в script.js для динамического
+    формирования прогресс-баров и иконок.
+*/
+.bg-indigo-500\/20 {
+}
+.text-indigo-400 {
+}
+.bg-blue-500\/20 {
+}
+.text-blue-400 {
+}
+.bg-green-500\/20 {
+}
+.text-green-400 {
+}
+.bg-pink-500\/20 {
+}
+.text-pink-400 {
+}
+.bg-cyan-500\/20 {
+}
+.text-cyan-400 {
+}
+.bg-yellow-500\/20 {
+}
+.text-yellow-400 {
+}
+.bg-indigo-600 {
+}
+.bg-blue-600 {
+}
+.bg-green-600 {
+}
+.bg-pink-600 {
+}
+.bg-cyan-600 {
+}
+.bg-yellow-600 {
+}
+.from-indigo-500 {
+}
+.to-purple-500 {
+}
+.bg-indigo-500\/30 {
+}
+.border-indigo-500\/30 {
 }
