@@ -1,10 +1,16 @@
 rules_version = '2';
 
-// Craft rules based on data in your Firestore database
-// allow write: if firestore.get(
-//    /databases/(default)/documents/users/$(request.auth.uid)).data.isAdmin;
 service firebase.storage {
   match /b/{bucket}/o {
+    
+    // Правила для материалов уроков
+    // Доступ на чтение для всех авторизованных пользователей
+    match /lessons/{allPaths=**} {
+      allow read: if request.auth != null;
+      allow write: if false; // Загрузка только через консоль администратора
+    }
+
+    // Запрет на всё остальное по умолчанию
     match /{allPaths=**} {
       allow read, write: if false;
     }

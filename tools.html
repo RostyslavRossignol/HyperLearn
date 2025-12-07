@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Инструменты - HyperLearn</title>
+        <style>html, body { background-color: #0f172a; }</style>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script src="https://unpkg.com/lucide@latest"></script>
+        <link rel="stylesheet" href="styles.css">
+        <link rel="stylesheet" href="styles_resources.css">
+
+        <!-- Firebase SDK (обязательно для работы профиля) -->
+        <script
+            src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+        <script
+            src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+        <script
+            src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    </head>
+    <body
+        class="relative h-screen overflow-hidden flex bg-[#0f172a] text-slate-300">
+
+        <div class="mesh-bg"><div class="blob"></div></div>
+        <div id="menu-overlay"
+            class="fixed inset-0 bg-black/60 z-30 hidden backdrop-blur-sm"></div>
+
+        <aside id="mobile-menu"
+            class="fixed lg:static inset-y-0 left-0 w-80 glass-panel border-r border-white/10 z-50 flex flex-col transition-all duration-300 h-full bg-[#0f172a]/95 backdrop-blur-xl -translate-x-full lg:translate-x-0">
+            <div class="p-6 flex items-center justify-between shrink-0">
+                <div class="flex items-center gap-3 logo-text-full">
+                    <div
+                        class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold shadow-lg">
+                        <i data-lucide="database"></i>
+                    </div>
+                    <span
+                        class="text-xl font-bold text-white tracking-tight">HyperLearn</span>
+                </div>
+                <!-- Иконка для свернутого состояния -->
+                <div
+                    class="hidden sidebar-icon-only w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold shadow-lg">
+                    <i data-lucide="database"></i>
+                </div>
+                <button id="close-menu-btn"
+                    class="lg:hidden text-slate-400 hover:text-white"><i
+                        data-lucide="x"></i></button>
+            </div>
+
+            <nav class="px-4 space-y-2 mt-4 shrink-0">
+                <a href="index.html"
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition font-medium">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i> <span
+                        class="sidebar-text">Дашборд</span>
+                </a>
+                <a href="course.html"
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition font-medium">
+                    <i data-lucide="play-circle" class="w-5 h-5"></i> <span
+                        class="sidebar-text">Мои курсы</span>
+                </a>
+                <a href="mentor.html"
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition font-medium">
+                    <i data-lucide="bot" class="w-5 h-5 text-indigo-400"></i>
+                    <span class="sidebar-text">AI Ментор</span>
+                </a>
+
+                <!-- Hardcoded Links for Stability -->
+                <div class="mt-6 pt-4 border-t border-white/10 sidebar-text">
+                    <p
+                        class="px-4 text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">База
+                        знаний</p>
+                    <a href="tools.html"
+                        class="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/10 text-white font-medium shadow-lg">
+                        <i data-lucide="wrench" class="w-5 h-5"></i> <span
+                            class="sidebar-text">Инструменты</span>
+                    </a>
+                    <a href="resources.html"
+                        class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition font-medium">
+                        <i data-lucide="library" class="w-5 h-5"></i> <span
+                            class="sidebar-text">Ресурсы</span>
+                    </a>
+                </div>
+            </nav>
+
+            <div
+                class="p-4 border-t border-white/10 mt-auto shrink-0 user-info-block">
+                <button onclick="logout()"
+                    class="flex items-center gap-3 w-full p-2 rounded-xl hover:bg-white/5 transition group text-left">
+                    <img
+                        class="w-10 h-10 rounded-full border border-indigo-500 bg-slate-800 user-avatar-img"
+                        src>
+                    <div class="flex-1 overflow-hidden sidebar-text">
+                        <p
+                            class="text-sm font-bold text-white truncate user-display-name">Загрузка...</p>
+                        <p class="text-xs text-indigo-400 font-medium">Выйти</p>
+                    </div>
+                    <i data-lucide="log-out"
+                        class="w-5 h-5 text-slate-500 group-hover:text-red-400 transition sidebar-text"></i>
+                </button>
+            </div>
+        </aside>
+
+        <main
+            class="flex-1 flex flex-col h-full relative overflow-y-auto bg-slate-900/50 custom-scrollbar">
+            <header
+                class="h-16 border-b border-white/5 flex items-center justify-between px-6 bg-slate-900/80 backdrop-blur sticky top-0 z-30 lg:hidden shrink-0">
+                <button id="burger-btn"
+                    class="text-white p-2 hover:bg-white/10 rounded-lg transition"><i
+                        data-lucide="menu"></i></button>
+                <h1 class="text-lg font-bold text-white ml-2">Инструменты</h1>
+                <div class="w-6"></div>
+            </header>
+
+            <div class="p-6 lg:p-10 max-w-7xl mx-auto w-full flex-1">
+                <h2 class="text-3xl font-bold text-white mb-2">Полезные
+                    инструменты</h2>
+                <p class="text-slate-400 mb-10">Сервисы и среды разработки для
+                    Data Science.</p>
+                <div id="tools-content-area"
+                    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="text-slate-500 animate-pulse flex gap-2"><i
+                            data-lucide="loader"></i> Загрузка
+                        инструментов...</div>
+                </div>
+            </div>
+        </main>
+
+        <script type="module" src="js/app.js"></script>
+        <script type="module" src="js/addon_loader.js"></script>
+    </body>
+</html>
