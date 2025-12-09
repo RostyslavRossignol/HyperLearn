@@ -4,6 +4,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>HyperLearn - Data Science Course</title>
+
         <script src="https://cdn.tailwindcss.com"></script>
         <script src="https://unpkg.com/lucide@latest"></script>
         <link rel="stylesheet" href="styles.css">
@@ -11,7 +12,6 @@
         <script src="https://www.google.com/recaptcha/api.js" async
             defer></script>
 
-        <!-- Firebase SDK -->
         <script
             src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
         <script
@@ -21,20 +21,18 @@
         <script
             src="https://www.gstatic.com/firebasejs/8.10.1/firebase-functions.js"></script>
 
-        <!-- FIX: Глобальное масштабирование интерфейса (80% = уменьшение на 20%) -->
         <style>
         html {
             font-size: 80%; /* Это заставит 1rem быть равным ~12.8px вместо 16px */
         }
     </style>
     </head>
+
     <body class="bg-[#0f172a] text-white overflow-x-hidden relative h-screen">
 
-        <!-- Canvas z-10 (Над фоном) -->
         <canvas id="network-canvas"
             class="fixed inset-0 z-10 pointer-events-none"></canvas>
 
-        <!-- Фон z-0 -->
         <div
             class="fixed inset-0 z-0 bg-gradient-to-b from-[#0f172a]/90 via-[#0f172a]/70 to-[#0f172a] pointer-events-none"></div>
 
@@ -45,15 +43,20 @@
                     class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-xl shadow-indigo-500/20">
                     <i data-lucide="database" class="w-7 h-7 text-white"></i>
                 </div>
-                <span
-                    class="font-bold text-2xl font-sans tracking-tight">HyperLearn
-                    <span class="text-indigo-400 font-light">DS</span></span>
+                <span class="font-bold text-2xl font-sans tracking-tight">
+                    HyperLearn <span
+                        class="text-indigo-400 font-light">DS</span>
+                </span>
             </div>
             <div class="flex gap-4 items-center">
                 <button onclick="openAuth('login')"
-                    class="text-slate-300 hover:text-white font-bold text-base px-4 py-2 transition hover:bg-white/5 rounded-xl">Войти</button>
+                    class="text-slate-300 hover:text-white font-bold text-base px-4 py-2 transition hover:bg-white/5 rounded-xl">
+                    Войти
+                </button>
                 <button onclick="openAuth('register')"
-                    class="px-6 py-3 bg-white/10 hover:bg-white/20 border border-white/10 rounded-xl text-base font-bold transition backdrop-blur-md">Регистрация</button>
+                    class="px-6 py-3 bg-white/10 hover:bg-white/20 border border-white/10 rounded-xl text-base font-bold transition backdrop-blur-md">
+                    Регистрация
+                </button>
             </div>
         </header>
 
@@ -70,7 +73,6 @@
                 Старт: в любое время. Занимайся в удобном темпе
             </div>
 
-            <!-- ОЧЕНЬ КРУПНЫЙ ЗАГОЛОВОК -->
             <h1
                 class="text-6xl md:text-8xl font-extrabold mb-8 leading-tight tracking-tight drop-shadow-2xl">
                 Data Science <br>
@@ -80,9 +82,9 @@
 
             <p
                 class="text-slate-300 text-xl md:text-2xl max-w-3xl mb-12 leading-relaxed font-light">
-                Освой Python, Machine Learning и Нейросети. <br>Твой личный
-                <span class="text-indigo-400 font-semibold">AI Ментор</span> уже
-                ждет тебя внутри.
+                Освой Python, Machine Learning и Нейросети. <br>
+                Твой личный <span class="text-indigo-400 font-semibold">AI
+                    Ментор</span> уже ждет тебя внутри.
             </p>
 
             <div class="flex flex-col md:flex-row gap-6 w-full md:w-auto">
@@ -99,14 +101,14 @@
             </div>
         </main>
 
-        <!-- PROGRAM OVERLAY (Модалка программы) -->
         <div id="program-overlay"
             class="fixed inset-0 z-[60] bg-black/90 backdrop-blur-md hidden flex justify-center p-4 transition-opacity duration-300 opacity-0 overflow-y-auto">
             <div
                 class="relative w-full max-w-5xl mt-10 mb-10 animate-fade-in-up">
                 <button onclick="closeProgram()"
-                    class="absolute -top-12 right-0 md:-right-12 text-slate-400 hover:text-white transition z-10"><i
-                        data-lucide="x" class="w-10 h-10"></i></button>
+                    class="absolute -top-12 right-0 md:-right-12 text-slate-400 hover:text-white transition z-10">
+                    <i data-lucide="x" class="w-10 h-10"></i>
+                </button>
                 <div
                     class="glass-panel-solid rounded-2xl p-6 md:p-10 shadow-2xl border border-indigo-500/20">
                     <h2
@@ -116,24 +118,24 @@
                     <div
                         class="mt-10 text-center pt-8 border-t border-white/10">
                         <button onclick="closeProgram(); openAuth('register')"
-                            class="px-10 py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition shadow-lg text-lg">Присоединиться
-                            сейчас</button>
+                            class="px-10 py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition shadow-lg text-lg">
+                            Присоединиться сейчас
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- AUTH OVERLAY (Модалка входа) -->
         <div id="auth-overlay"
             class="fixed inset-0 z-[60] bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4 transition-opacity duration-300 opacity-0">
             <div class="relative w-full max-w-md h-[600px] perspective-1000">
                 <button onclick="closeAuth()"
-                    class="absolute -top-12 right-0 text-slate-400 hover:text-white transition z-10"><i
-                        data-lucide="x" class="w-8 h-8"></i></button>
+                    class="absolute -top-12 right-0 text-slate-400 hover:text-white transition z-10">
+                    <i data-lucide="x" class="w-8 h-8"></i>
+                </button>
                 <div id="auth-card-inner"
                     class="relative w-full h-full transition-transform duration-700 transform-style-3d">
 
-                    <!-- LOGIN -->
                     <div
                         class="absolute inset-0 glass-panel-solid rounded-3xl p-10 flex flex-col backface-hidden shadow-2xl bg-[#0f172a] border border-white/10">
                         <h2 class="text-3xl font-bold text-white mb-6">Вход</h2>
@@ -142,7 +144,6 @@
                             <input type="email" placeholder="Email"
                                 class="w-full bg-slate-900/50 border border-slate-700 rounded-xl py-4 px-5 text-white focus:border-indigo-500 outline-none transition text-lg">
 
-                            <!-- Password Field with Toggle -->
                             <div class="relative">
                                 <input type="password" id="login-password"
                                     placeholder="Пароль"
@@ -156,17 +157,19 @@
                             </div>
 
                             <button type="submit"
-                                class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 rounded-xl shadow-lg mt-6 text-lg transition transform hover:scale-[1.02]">Войти</button>
+                                class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 rounded-xl shadow-lg mt-6 text-lg transition transform hover:scale-[1.02]">
+                                Войти
+                            </button>
                         </form>
                         <div
                             class="mt-6 text-center border-t border-white/5 pt-6">
                             <button onclick="toggleAuthMode()"
-                                class="text-indigo-400 hover:text-indigo-300 font-semibold text-base">Нет
-                                аккаунта? Регистрация</button>
+                                class="text-indigo-400 hover:text-indigo-300 font-semibold text-base">
+                                Нет аккаунта? Регистрация
+                            </button>
                         </div>
                     </div>
 
-                    <!-- REGISTER -->
                     <div
                         class="absolute inset-0 glass-panel-solid rounded-3xl p-10 flex flex-col backface-hidden rotate-y-180 shadow-2xl bg-[#0f172a] border border-white/10">
                         <h2
@@ -179,7 +182,6 @@
                             <input type="email" placeholder="Email"
                                 class="w-full bg-slate-900/50 border border-slate-700 rounded-xl py-4 px-5 text-white focus:border-indigo-500 outline-none transition text-lg">
 
-                            <!-- Password Field with Toggle -->
                             <div class="relative">
                                 <input type="password" id="register-password"
                                     placeholder="Пароль"
@@ -193,44 +195,49 @@
                             </div>
 
                             <div
-                                class="flex justify-center mt-2 scale-90 origin-center"><div
-                                    id="g-recaptcha" class="g-recaptcha"
-                                    data-sitekey="6LfhgSAsAAAAAAA8TmABhdTTaO0BLEuGR4Ptdgsa"></div></div>
+                                class="flex justify-center mt-2 scale-90 origin-center">
+                                <div id="g-recaptcha" class="g-recaptcha"
+                                    data-sitekey="6LfhgSAsAAAAAAA8TmABhdTTaO0BLEuGR4Ptdgsa"></div>
+                            </div>
                             <button type="submit"
-                                class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold py-4 rounded-xl shadow-lg mt-4 text-lg transition transform hover:scale-[1.02]">Создать
-                                аккаунт</button>
+                                class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold py-4 rounded-xl shadow-lg mt-4 text-lg transition transform hover:scale-[1.02]">
+                                Создать аккаунт
+                            </button>
                         </form>
                         <div
                             class="mt-4 text-center border-t border-white/5 pt-4">
                             <button onclick="toggleAuthMode()"
-                                class="text-indigo-400 hover:text-indigo-300 font-semibold text-base">Уже
-                                есть аккаунт? Войти</button>
+                                class="text-indigo-400 hover:text-indigo-300 font-semibold text-base">
+                                Уже есть аккаунт? Войти
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- GLOBAL UI FUNCTIONS -->
         <script>
+        // --- Auth UI Toggles ---
         function openAuth(mode) {
             const overlay = document.getElementById('auth-overlay');
             const card = document.getElementById('auth-card-inner');
             overlay.classList.remove('hidden');
             setTimeout(() => overlay.classList.remove('opacity-0'), 10);
-            if(mode === 'register') card.classList.add('flipped');
+            if (mode === 'register') card.classList.add('flipped');
             else card.classList.remove('flipped');
         }
+
         function closeAuth() {
             const overlay = document.getElementById('auth-overlay');
             overlay.classList.add('opacity-0');
             setTimeout(() => overlay.classList.add('hidden'), 300);
         }
+
         function toggleAuthMode() {
             document.getElementById('auth-card-inner').classList.toggle('flipped');
         }
-        
-        // FIX: Функция для переключения видимости пароля
+
+        // --- Password Visibility Toggle ---
         function togglePassword(inputId, iconId) {
             const input = document.getElementById(inputId);
             const icon = document.getElementById(iconId);
@@ -244,108 +251,498 @@
             if (typeof lucide !== 'undefined') lucide.createIcons();
         }
 
-        // FIX: Полная база данных курсов для лендинга
+        // --- Program Overlay Toggles ---
+        function openProgram() {
+            const overlay = document.getElementById('program-overlay');
+            overlay.classList.remove('hidden');
+            setTimeout(() => overlay.classList.remove('opacity-0'), 10);
+            renderLandingProgram();
+        }
+
+        function closeProgram() {
+            const overlay = document.getElementById('program-overlay');
+            overlay.classList.add('opacity-0');
+            setTimeout(() => overlay.classList.add('hidden'), 300);
+        }
+
+        // --- Data Database ---
         const LANDING_COURSES_DB = {
             python: {
                 title: "КУРС 1: Python для Data Science",
                 color: "indigo",
                 icon: "code-2",
                 modules: [
-                    { title: "Модуль 0: Введение", lessons: ["0.1 Python в ML", "0.2 Анализ изображений"] },
-                    { title: "Модуль 1: Основы Python", lessons: ["1.1 Переменные", "1.2 Типы данных", "1.3 Циклы", "1.4 Условный оператор If"] },
-                    { title: "Модуль 2: Структуры данных", lessons: ["2.1 Функции", "2.2 Аргументы", "2.3 Call stack", "2.4 Ссылочная модель", "2.5 Модель памяти", "2.6 Изменяемые типы", "2.7 Срезы"] },
-                    { title: "Модуль 3: Окружение", lessons: ["3.1 Библиотеки", "3.2 Anaconda", "3.3 Virtual Env"] },
-                    { title: "Модуль 4: Инструменты", lessons: ["4.1 Jupyter", "4.6 Numpy", "4.7 Pandas", "4.8 Matplotlib"] },
-                    { title: "Модуль 5: Pandas", lessons: ["5.1 Чтение файлов", "5.2 Фильтрация", "5.5 Группировка", "5.7 Визуализация"] },
-                    { title: "Модуль 6: SQL", lessons: ["6.1 Базы данных", "6.2 SELECT", "6.3 JOIN", "6.4 SQL в Python"] },
-                    { title: "Модуль 7: ООП", lessons: ["7.1 Классы", "7.2 Принципы ООП 1", "7.3 Принципы ООП 2"] },
-                    { title: "Модуль 8: Git", lessons: ["8.1 Введение", "8.2 Ветки", "8.7 GitHub"] },
-                    { title: "Модуль 9: Backend", lessons: ["9.1 HTTP", "9.3 GET", "9.4 POST"] },
-                    { title: "Модуль 11: Airflow", lessons: ["11.1 Введение", "11.2 Устройство", "11.4 Operator"] },
-                    { title: "Модуль 12: Best Practices", lessons: ["12.1 Шаблон", "12.3 SQL Injection"] }
+                    {
+                        title: "Модуль 0: Введение",
+                        lessons: ["0.1 Python в машинном обучении", "0.2 Пример — Python для анализа изображений"]
+                    },
+                    {
+                        title: "Модуль 1: Основы Python",
+                        lessons: ["1.1 Переменные", "1.2 Типы данных", "1.3 Циклы (while, for)", "1.4 Условный оператор If"]
+                    },
+                    {
+                        title: "Модуль 2: Структуры данных и функции",
+                        lessons: [
+                            "2.1 Функции в python",
+                            "2.2 Аргументы функции",
+                            "2.3 Call stack и ошибки в python",
+                            "2.4 Ссылочная модель данных",
+                            "2.5 Модель памяти в python",
+                            "2.6 Изменяемые и неизменяемые типы данных",
+                            "2.7 Срезы. Продвинутая работа со строками"
+                        ]
+                    },
+                    {
+                        title: "Модуль 3: Окружение",
+                        lessons: [
+                            "3.0 Интро",
+                            "3.1 Библиотеки и PIP",
+                            "3.2 Windows 10 Установка Anaconda",
+                            "3.3 Linux Установка Anaconda",
+                            "3.4 MacOS Установка Anaconda",
+                            "3.5 Установка сторонних пакетов",
+                            "3.6 Виртуальное окружение",
+                            "3.7 Итоги"
+                        ]
+                    },
+                    {
+                        title: "Модуль 4: Инструменты (Jupyter, Numpy)",
+                        lessons: [
+                            "4.1 Введение",
+                            "4.2 Знакомство с Jupyter. Ячейки",
+                            "4.3 Знакомство с Jupyter. Горячие клавиши",
+                            "4.4 Знакомство с Jupyter. Магические команды",
+                            "4.5 Знакомство с Jupyter. Kernel",
+                            "4.6 Numpy Основы",
+                            "4.7 Pandas Введение",
+                            "4.8 Matplotlib",
+                            "4.9 Заключение"
+                        ]
+                    },
+                    {
+                        title: "Модуль 5: Pandas (Обработка данных)",
+                        lessons: [
+                            "5.1 Чтение файлов и обзор данных",
+                            "5.2 Фильтрация данных, логические операторы",
+                            "5.3 Функции фильтры",
+                            "5.4 Series и Index",
+                            "5.5 Группировка данных",
+                            "5.6 Работа с датами и временем",
+                            "5.7 Визуализация",
+                            "5.8 Сохранение данных"
+                        ]
+                    },
+                    {
+                        title: "Модуль 6: SQL и Базы данных",
+                        lessons: ["6.1 Базы данных и СУБД", "6.2 Основные SQL запросы", "6.3 Объединение таблиц JOIN", "6.4 SQL внутри Python"]
+                    },
+                    {
+                        title: "Модуль 7: ООП",
+                        lessons: ["7.1 Классы, объекты и методы", "7.2 Принципы ООП Часть 1", "7.3 Принципы ООП. Часть 2"]
+                    },
+                    {
+                        title: "Модуль 8: Git (Контроль версий)",
+                        lessons: [
+                            "8.1 Введение в Git",
+                            "8.2 Ветки и теги",
+                            "8.3 Возможности git diff",
+                            "8.4 Слияние веток",
+                            "8.5 Конфликт слияния веток",
+                            "8.6 Стратегии ветвления",
+                            "8.7 Загрузка репозитория на удаленный сервер"
+                        ]
+                    },
+                    {
+                        title: "Модуль 9: Backend (FastAPI)",
+                        lessons: [
+                            "9.1 Запрос на сервер",
+                            "9.2 Ответ сервера API",
+                            "9.3 Практика написания запросов. Метод GET",
+                            "9.4 Практика написания запросов. Метод POST",
+                            "9.5 Подводные камни валидации",
+                            "9.6 Статус коды"
+                        ]
+                    },
+                    {
+                        title: "Модуль 10: ORM (SQLAlchemy)",
+                        lessons: ["10.1 FastAPI и SQLAlchemy", "10.2 ORM, SQLAlchemy"]
+                    },
+                    {
+                        title: "Модуль 11: Airflow (Data Engineering)",
+                        lessons: [
+                            "11.1 Введение в DE",
+                            "11.2 Устройство Airflow",
+                            "11.3 Запуск и веб интерфейс",
+                            "11.4 Python Operator",
+                            "11.5 Передача информации",
+                            "11.6 Connections",
+                            "11.7 Лучшие практики"
+                        ]
+                    },
+                    {
+                        title: "Модуль 12: Best Practices",
+                        lessons: [
+                            "12.1 Шаблон приложения",
+                            "12.2 Переменные окружения",
+                            "12.3 Проблема SQL инъекций",
+                            "12.4 Вынесение настроек в конфиг",
+                            "12.5 Разделение кода на модули",
+                            "12.6 Идемпотентность"
+                        ]
+                    }
                 ]
             },
+
             algo: {
                 title: "КУРС 2: Алгоритмы",
                 color: "blue",
                 icon: "cpu",
                 modules: [
-                    { title: "Модуль 1: Введение", lessons: ["1.1 Собеседования"] },
-                    { title: "Модуль 2: Сложность", lessons: ["2.1 Big O", "2.2 Оценка сложности"] },
-                    { title: "Модуль 3: Списки", lessons: ["3.1 Массивы", "3.2 Связные списки"] },
-                    { title: "Модуль 4: Графы", lessons: ["4.1 Введение", "4.2 BFS/DFS", "4.5 Кучи"] },
-                    { title: "Модуль 5: Подходы", lessons: ["5.1 Рекурсия", "5.2 Динамическое прог."] }
+                    { title: "Модуль 1: Введение", lessons: ["1.1 Введение"] },
+                    {
+                        title: "Модуль 2: Сложность алгоритмов",
+                        lessons: [
+                            "2.1 Сложность алгоритмов и «О» нотация",
+                            "2.2 Примеры оценки сложности алгоритмов",
+                            "2.3 Правила 1",
+                            "2.4 Амортизированная сложность",
+                            "2.5 Правила 2",
+                            "2.6 Нетривиальные задачи. Примеры"
+                        ]
+                    },
+                    {
+                        title: "Модуль 3: Базовые структуры (Списки)",
+                        lessons: [
+                            "3.1 Массивы и указатели",
+                            "3.2 Задача контейнер с водой",
+                            "3.3 Односвязный и двусвязный список, задача на разворот",
+                            "3.4 Граничные условия, задача на подсвет букв подряд"
+                        ]
+                    },
+                    {
+                        title: "Модуль 4: Деревья и Графы",
+                        lessons: [
+                            "4.1 Основные определения графов",
+                            "4.2 Обход в ширину и глубину (BFS/DFS)",
+                            "4.3 Компонента связности",
+                            "4.4 Деревья основные определения",
+                            "4.5 Кучи и сортировка кучей"
+                        ]
+                    },
+                    {
+                        title: "Модуль 5: Алгоритмические подходы",
+                        lessons: ["5.1 Общий подход к рекурсии", "5.2 Динамическое программирование", "5.3 Разделяй и властвуй"]
+                    }
                 ]
             },
+
             stats: {
                 title: "КУРС 3: Мат. Статистика",
                 color: "green",
                 icon: "bar-chart-2",
                 modules: [
-                    { title: "Модуль 1: Вероятность", lessons: ["1.1 Статистика в ML", "1.3 Байес"] },
-                    { title: "Модуль 2: Доверительные интервалы", lessons: ["2.1 Зачем нужны", "2.4 ЦПТ"] },
-                    { title: "Модуль 4: Гипотезы", lessons: ["4.1 Проверка гипотез"] },
-                    { title: "Модуль 7: A/B Тесты", lessons: ["7.1 Дизайн экспериментов"] }
+                    {
+                        title: "Модуль 1: Теория вероятностей",
+                        lessons: [
+                            "1.1 Статистика в ML",
+                            "1.2 Введение в теорию вероятностей",
+                            "1.3 Условная вероятность. Формула Байеса",
+                            "1.4 Введение в статистику",
+                            "1.5 Дискретные распределения"
+                        ]
+                    },
+                    {
+                        title: "Модуль 2: Доверительные интервалы",
+                        lessons: [
+                            "2.1 Для чего нужны доверительные интервалы",
+                            "2.2 Построение доверительных интервалов",
+                            "2.3 Виды распределений случайных величин",
+                            "2.4 Центральная предельная теорема ЦПТ",
+                            "2.5 Применение ЦПТ",
+                            "2.6 Доверительный интервал для доли"
+                        ]
+                    },
+                    { title: "Модуль 3: Корреляция", lessons: ["3.1 Статистики распределений, взаимосвязь случайных величин"] },
+                    { title: "Модуль 4: Проверка гипотез", lessons: ["4.1 Проверка гипотез, параметрические критерии"] },
+                    { title: "Модуль 5: Непараметрические критерии", lessons: ["5.1 Непараметрические статистические критерии"] },
+                    { title: "Модуль 6: MLE (Maximum Likelihood)", lessons: ["6.1 Метод максимума правдоподобия и ядерная оценка плотности"] },
+                    { title: "Модуль 7: Дизайн тестов", lessons: ["7.1 Дизайн AB эксперимента"] },
+                    { title: "Модуль 8: Валидация", lessons: ["8.1 AA эксперименты и валидация методики экспериментирования"] },
+                    { title: "Модуль 9: Ошибки", lessons: ["9.1 Ошибки при проведении AB тестов"] },
+                    {
+                        title: "Модуль 10: Чувствительность метрик",
+                        lessons: ["10.1 Уменьшение дисперсии. Поправка Cuped", "10.2 Сравнение изменений числа кликов и CTR"]
+                    },
+                    { title: "Модуль 11: Ограничения", lessons: ["11.1 Невозможность проведения AB тестов"] }
                 ]
             },
+
             ml: {
                 title: "КУРС 4: Machine Learning",
                 color: "pink",
                 icon: "brain-circuit",
                 modules: [
-                    { title: "Модуль 1: Введение", lessons: ["1.1 Виды ML", "1.2 Метрики"] },
-                    { title: "Модуль 2: Метрики", lessons: ["2.3 Loss function", "2.5 MSE/MAE"] },
-                    { title: "Модуль 3: Линейная регрессия", lessons: ["3.3 OLS", "3.7 Практика"] },
-                    { title: "Модуль 4: Градиентный спуск", lessons: ["4.1 Принцип работы"] },
-                    { title: "Модуль 6: Регуляризация", lessons: ["6.1 Переобучение", "6.2 L1/L2"] },
-                    { title: "Модуль 8: Feature Engineering", lessons: ["8.1 Пропуски", "8.3 TF-IDF"] },
-                    { title: "Модуль 17: Деревья", lessons: ["17.1 Decision Trees", "17.4 Практика"] },
-                    { title: "Модуль 19: Ансамбли", lessons: ["19.2 Random Forest"] },
-                    { title: "Модуль 20: Бустинг", lessons: ["20.2 Gradient Boosting", "20.4 CatBoost"] },
-                    { title: "Модуль 21: Кластеризация", lessons: ["21.2 K-Means", "21.3 DBSCAN"] }
+                    {
+                        title: "Модуль 1: Введение",
+                        lessons: ["1.1 Задачи машинного обучения", "1.2 Основные виды машинного обучения", "1.3 Компоненты классической ML-задачи", "1.4 Практика"]
+                    },
+                    {
+                        title: "Модуль 2: Метрики",
+                        lessons: [
+                            "2.1 Оценка качества модели",
+                            "2.2 Понятие функции и функциональной зависимости",
+                            "2.3 Функция потерь Loss function",
+                            "2.4 Функционал качества и метрика",
+                            "2.5 Король и королева регрессии MSE и MAE",
+                            "2.6 Практика"
+                        ]
+                    },
+                    {
+                        title: "Модуль 3: Линейная регрессия",
+                        lessons: [
+                            "3.1 Линейные модели в МО",
+                            "3.2 Экстремумы и производная функции",
+                            "3.3 Линейная регрессия OLS",
+                            "3.4 Ликбез №3 Матрицы",
+                            "3.5 Работа с массивами в Numpy",
+                            "3.6 Линейная регрессия OLS Матричная форма",
+                            "3.7 Линейная регрессия в Python. Практика"
+                        ]
+                    },
+                    {
+                        title: "Модуль 4: Градиентный спуск",
+                        lessons: [
+                            "4.1 Введение в градиентный спуск Минимизация функции с одной переменной",
+                            "4.2 Минимизация функции с несколькими переменными",
+                            "4.3 Линейная регрессия Подбор параметров",
+                            "4.4 Настройка параметров графика в matplotlib",
+                            "4.5 Изображение градиентного спуска в matplotlib"
+                        ]
+                    },
+                    {
+                        title: "Модуль 5: Валидация",
+                        lessons: [
+                            "5.1 Обобщающая способность, метод отложенной выборки и кросс валидация",
+                            "5.2 Практика Переобучение и недообучение",
+                            "5.3 Кросс валидация, реальный практический пример"
+                        ]
+                    },
+                    {
+                        title: "Модуль 6: Регуляризация",
+                        lessons: [
+                            "6.1 Проблема переобучения в МО",
+                            "6.2 Регуляризация и масштабирование признаков",
+                            "6.3 Ликбез №1 Условный экстремум и регуляризация",
+                            "6.4 Практика №1. Регуляризация",
+                            "6.5 Мультиколлинеарность",
+                            "6.6 Практика №2. Мультиколлинеарность"
+                        ]
+                    },
+                    {
+                        title: "Модуль 7: Отбор признаков",
+                        lessons: ["7.1 EDA", "7.2 Встроенные методы", "7.3 Метод обёртки", "7.4 Метод фильтрации"]
+                    },
+                    {
+                        title: "Модуль 8: Работа с данными (Feature Engineering)",
+                        lessons: [
+                            "8.1 Работа с пропущенными значениями",
+                            "8.2 Работа с выбросами Advanced счетчики",
+                            "8.3 Выделение признаков из текста. Подход TF IDF",
+                            "8.4 Лемматизация и стемминг"
+                        ]
+                    },
+                    {
+                        title: "Модуль 9: Проект Housing Market",
+                        lessons: [
+                            "9.1 Обработка вещественных признаков",
+                            "9.2 Обработка категориальных признаков",
+                            "9.3 Построение модели",
+                            "9.4 Анализ выбросов",
+                            "9.5 Сегментация данных"
+                        ]
+                    },
+                    {
+                        title: "Модуль 10: Линейная классификация",
+                        lessons: [
+                            "10.1 Бинарная классификация, разделяющая гиперплоскость",
+                            "10.2 Как строить разделяющую гиперплоскость",
+                            "10.3 Ликбез 1. Метод верхней оценки",
+                            "10.4 Практика. Линейная бинарная классификация в python"
+                        ]
+                    },
+                    {
+                        title: "Модуль 11: Матрица ошибок",
+                        lessons: ["11.1 Метрики бинарной классификации. Теория", "11.2 Метрики бинарной классификации. Практика"]
+                    },
+                    {
+                        title: "Модуль 12: Качество классификации",
+                        lessons: [
+                            "12.1 ROC кривая AUC ROC",
+                            "12.2 PR кривая AUC PR. Практика построения ROC кривых и PR кривых",
+                            "12.3 Калибровочная кривая модели"
+                        ]
+                    },
+                    {
+                        title: "Модуль 13: SVM",
+                        lessons: [
+                            "13.1 Метод опорных векторов SVM",
+                            "13.2 Линейная неразделимость - регуляризация в бинарной классификации",
+                            "13.3 Практика"
+                        ]
+                    },
+                    {
+                        title: "Модуль 14: Многоклассовая классификация",
+                        lessons: ["14.1 Методы one vs all и one vs one", "14.2 Метрики качества", "14.3 Практика. Задача сегментации клиентов"]
+                    },
+                    {
+                        title: "Модуль 15: Понижение размерности",
+                        lessons: ["15.1 Понижение размерности. Постановка задачи", "15.2 Метод главных компонент", "15.3 T-SNE", "15.4 Практика"]
+                    },
+                    {
+                        title: "Модуль 16: KNN",
+                        lessons: [
+                            "16.1 Метод K ближайших соседей",
+                            "16.2 Практика. Сравнение линейной регрессии и метода KNN",
+                            "16.3 Гиперпараметры p и h. Перевзвешивание соседей",
+                            "16.4 Практика. Гауссовское ядро"
+                        ]
+                    },
+                    {
+                        title: "Модуль 17: Решающие деревья (Decision Trees)",
+                        lessons: [
+                            "17.1 Введение в решающие деревья",
+                            "17.2 Критерии качества и информативности",
+                            "17.3 Критерии останова и жадный алгоритм",
+                            "17.4 Практика"
+                        ]
+                    },
+                    {
+                        title: "Модуль 18: Переобучение деревьев",
+                        lessons: [
+                            "18.1 Решающие деревья и проблема переобучения",
+                            "18.2 Практика. Предобработка и трансформация данных",
+                            "18.3 Практика. Обучение модели Decision tree"
+                        ]
+                    },
+                    {
+                        title: "Модуль 19: Ансамбли (Ensembles)",
+                        lessons: [
+                            "19.1 Композиции алгоритмов, бэггинг",
+                            "19.2 Random forest",
+                            "19.3 Стекинг",
+                            "19.4 Практика"
+                        ]
+                    },
+                    {
+                        title: "Модуль 20: Градиентный бустинг",
+                        lessons: ["20.1 Бустинг", "20.2 Градиентный бустинг", "20.3 Bias-variance tradeoff", "20.4 Практика"]
+                    },
+                    {
+                        title: "Модуль 21: Кластеризация",
+                        lessons: ["21.1 Введение", "21.2 K-means", "21.3 DBSCAN", "21.4 Практика"]
+                    },
+                    {
+                        title: "Модуль 22: Рекомендательные системы",
+                        lessons: [
+                            "22.1 Контентная рекомендация",
+                            "22.2 Коллаборативная фильтрация",
+                            "22.3 Оценка качества и валидация рекомендательных систем",
+                            "22.4 Практика построение модели рекомендательной системы"
+                        ]
+                    },
+                    {
+                        title: "Модуль 23: Итоги",
+                        lessons: ["23.1 Общие вопросы", "23.2 Вопросы о линейных моделях"]
+                    },
+                    { title: "Модуль 24: Финал", lessons: ["24.1 Финал"] }
                 ]
             },
+
             dl: {
                 title: "КУРС 5: Deep Learning",
                 color: "cyan",
                 icon: "network",
                 modules: [
-                    { title: "Модуль 1: Основы DL", lessons: ["1.1 Перцептрон", "1.2 Backpropagation"] },
-                    { title: "Модуль 2: Обучение", lessons: ["2.1 PyTorch"] },
-                    { title: "Модуль 3: CNN", lessons: ["3.1 Свертки"] },
-                    { title: "Модуль 6: Detection", lessons: ["6.1 YOLO"] },
-                    { title: "Модуль 9: NLP", lessons: ["9.1 RNN/LSTM", "9.2 Attention"] },
-                    { title: "Модуль 10: Transformers", lessons: ["10.2 BERT", "10.3 GPT"] }
+                    {
+                        title: "Модуль 1: Основы DL",
+                        lessons: ["1.1 Введение. Полносвязные слои. Функции активации", "1.2 Семинар"]
+                    },
+                    {
+                        title: "Модуль 2: Обучение сетей",
+                        lessons: [
+                            "2.1 Градиентный спуск и методы оптимизации. Лекция",
+                            "2.2 Обучение нейронных сетей. Лекция",
+                            "2.3 Высокоуровневое API для обучения нейросети. Семинар",
+                            "2.4 Обучение первой нейросети в PyTorch. Семинар"
+                        ]
+                    },
+                    {
+                        title: "Модуль 3: CNN (Сверточные сети)",
+                        lessons: ["3.1 Сверточные нейронные сети. Лекция", "3.2 Сверточные нейронные сети. Семинар"]
+                    },
+                    {
+                        title: "Модуль 4: Тюнинг нейросетей",
+                        lessons: [
+                            "4.1 Регуляризация и нормализация нейронных сетей. Batch нормализация",
+                            "4.2 Нормализация входных данных. Инициализация параметров. Аугментация данных",
+                            "4.3 Практика"
+                        ]
+                    },
+                    { title: "Модуль 5: Архитектуры CNN", lessons: ["5.1 Популярные архитектуры сверточных нейронных сетей. Перенос знаний"] },
+                    {
+                        title: "Модуль 6: Компьютерное зрение (Object Detection)",
+                        lessons: ["6.1 Сегментация объектов", "6.2 Практика по сегментации", "6.3 Детекция объектов", "6.4 Практика по детекции"]
+                    },
+                    {
+                        title: "Модуль 7: Лица и Автоэнкодеры",
+                        lessons: ["7.1 Автоэнкодеры", "7.2 Идентификация лиц", "7.3 Автоэнкодеры на практике", "7.4 Распознавание лиц на практике"]
+                    },
+                    {
+                        title: "Модуль 8: NLP - Векторы",
+                        lessons: ["8.1 Векторные представления текстов. Лекция", "8.2 Векторные представления текстов. Семинар"]
+                    },
+                    {
+                        title: "Модуль 9: NLP - RNN & Attention",
+                        lessons: ["9.1 Реккурентные нейронные сети (RNN) и их модификации", "9.3 Трансформер", "9.4 Практика"]
+                    },
+                    {
+                        title: "Модуль 10: Трансформеры (SOTA)",
+                        lessons: ["10.1 Трансформер своими руками", "10.2 Bert", "10.3 GPT"]
+                    }
                 ]
             },
+
             career: {
                 title: "БОНУС: Карьера",
                 color: "yellow",
                 icon: "briefcase",
                 modules: [
-                    { title: "Трудоустройство", lessons: ["1.1 Резюме", "1.2 Гитхаб", "1.3 Собеседования"] }
+                    {
+                        title: "Модуль 1: Собеседования",
+                        lessons: [
+                            "Машинное обучение ещё раз повторяем, что может встретиться на собеседовании",
+                            "Собеседования по теории вероятностей и статистике",
+                            "Собеседования по AB тестированию"
+                        ]
+                    },
+                    {
+                        title: "Модуль 2: Трудоустройство",
+                        lessons: [
+                            "Трудоустройство - первые шаги (Start ML_подготовка, как оформить гитхаб, Гайд для ML)",
+                            "Гайд для ML"
+                        ]
+                    }
                 ]
             }
         };
-        
-        function openProgram() {
-             const overlay = document.getElementById('program-overlay');
-             overlay.classList.remove('hidden');
-             setTimeout(() => overlay.classList.remove('opacity-0'), 10);
-             renderLandingProgram(); // Рендер из скрипта ниже
-        }
-        function closeProgram() {
-             const overlay = document.getElementById('program-overlay');
-             overlay.classList.add('opacity-0');
-             setTimeout(() => overlay.classList.add('hidden'), 300);
-        }
-        
+
+        // --- Render Functions ---
         function renderLandingProgram() {
             const content = document.getElementById('program-content');
-            if(content.children.length > 0) return;
+            if (content.children.length > 0) return;
 
             const courseOrder = ['python', 'algo', 'stats', 'ml', 'dl', 'career'];
-            
+
             content.innerHTML = courseOrder.map(key => {
                 const c = LANDING_COURSES_DB[key];
                 return `
@@ -378,12 +775,13 @@
                     </details>
                 </div>`;
             }).join('');
-            if(typeof lucide !== 'undefined') lucide.createIcons();
+            
+            if (typeof lucide !== 'undefined') lucide.createIcons();
         }
     </script>
 
         <script type="module" src="js/app.js"></script>
         <link rel="stylesheet" href="styles_resources.css">
-        <script type="module" src="js/addon_loader.js"></script> 
+        <script type="module" src="js/addon_loader.js"></script>
     </body>
 </html>
